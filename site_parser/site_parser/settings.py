@@ -121,6 +121,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "site_parser/static"),
+    os.path.join(BASE_DIR, "api/static"),
 )
 
 # Default primary key field type
