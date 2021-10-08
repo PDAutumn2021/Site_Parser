@@ -16,7 +16,6 @@ SECRET_KEY = 'some_key'
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # ваша БД
 DB = {
-    'default': {
         # возможно использование других СУБД см. https://docs.djangoproject.com/en/3.2/ref/settings/#engine
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'name',
@@ -24,7 +23,6 @@ DB = {
         'PASSWORD': 'password',
         'HOST': 'example.com',
         'PORT': '3306',
-    }
 }
 ```
 
