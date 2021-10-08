@@ -1,4 +1,4 @@
 /venv/**
 /.idea/**
-/site_parser/site_parser/__init__.py
+#/site/site_parser/__init__.py
 **/__pycache__
