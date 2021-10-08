@@ -1,4 +1,4 @@
 /venv/**
 /.idea/**
-#/site/site_parser/__init__.py
+/site/site_parser/protected.py
 **/__pycache__
