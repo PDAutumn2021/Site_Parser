@@ -14,7 +14,7 @@ def get_data(depth=[0, 0, 0, 0]):
     if depth[0] == 0:
         depth[0] = len(to_parse)
     for cat in to_parse[:depth[0]]:
-        result.append(parse_category(cat, depth[1:]))
+        result.append(parse_category(s, cat, depth[1:]))
 
     return result
 
