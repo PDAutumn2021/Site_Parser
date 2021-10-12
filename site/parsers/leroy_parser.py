@@ -1,7 +1,7 @@
 import json
 import requests
 
-from site.parsers.utils import parse_category
+from utils import parse_category
 
 
 def get_data(depth=[0, 0, 0, 0]):
