@@ -2,14 +2,27 @@ import time
 import random
 import re
 import json
+import bs4.element
+import requests
 from bs4 import BeautifulSoup
+from typing import Tuple, Dict, Any, List
 
 api_key = None
 request_id = None
 main_href = 'https://leroymerlin.ru'
 
 
-def get_response(s, href, timeout_range=(5, 10)):
+def get_response(s: requests.Session, href: str, timeout_range: Tuple = (5, 10)) -> bs4.element.Tag:
+  '''
+    s: requests.Session - session object
+    href: str - html reference string
+    timeout_range: Tuple - range of random timeout
+        timeout_range[0] - lower
+        timeout_range[1] - upper
+
+    returns: bs4.element.Tag
+  '''
+
   header = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4174.0 Safari/537.36',
         'Accept': 'application/json',
@@ -24,7 +37,14 @@ def get_response(s, href, timeout_range=(5, 10)):
   return html
 
 
-def parse_good(s, good):
+def parse_good(s: requests.Session, good: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+        s: requests.Session - session object
+        good: Dict[str, Any] - object defining good
+
+        return: Dict[str, Any]
+    '''
+
     dict_go = dict(
         name=good['displayedName'],
         photo=good['mediaMainPhoto']['desktop'],
@@ -41,7 +61,15 @@ def parse_good(s, good):
     return dict_go
 
 
-def parse_class(s, cl, depths=[0]):
+def parse_class(s: requests.Session, cl: Dict[str, Any], depths: List[int] = [0]) -> Dict[str, Any]:
+    '''
+        s: requests.Sessio - session object
+        cl: Dict[str, Any] - object defining class
+        depths: List[int] - object defining depth
+
+        return: Dict[str, Any]
+    '''
+
     global api_key
     global request_id
     dict_cl = dict(
@@ -78,7 +106,15 @@ def parse_class(s, cl, depths=[0]):
     return dict_cl
 
 
-def parse_subcategory(s, sub, depths=[0, 0]):
+def parse_subcategory(s: requests.Session, sub: Dict[str, Any], depths: List[int] =[0, 0]) -> Dict[str, Any]:
+    '''
+        s: requests.Session - session object
+        sub: Dict[str, Any] - object defining subcategory
+        depths: List[int] - object defining depth
+
+        return: Dict[str, Any]
+    '''
+
     dict_sub = dict(
         name=sub['name'],
         href=main_href + sub['sitePath'],
@@ -91,7 +127,15 @@ def parse_subcategory(s, sub, depths=[0, 0]):
     return dict_sub
 
 
-def parse_category(s, cat, depths=[0, 0, 0]):
+def parse_category(s: requests.Session, cat: Dict[str, Any], depths: List[int] = [0, 0, 0]) -> Dict[str, Any]:
+    '''
+        s: requests.Session - session object
+        cat: Dict[str, Any] - object defining category
+        depths: List[int] - object defining depth
+
+        return: Dict[str, Any]
+    '''
+
     dict_cat = dict(
         name=cat['name'],
         href=main_href + cat['sitePath'],
@@ -104,7 +148,13 @@ def parse_category(s, cat, depths=[0, 0, 0]):
     return dict_cat
 
 
-def get_headers(event, *args):
+def get_headers(event: str, *args) -> Dict[str, str]:
+  '''
+        event: str - name of event
+
+        return: Dict[str, str]
+  '''
+
   if event == 'get-api-key':
     return {
         'authority': 'leroymerlin.ru',
