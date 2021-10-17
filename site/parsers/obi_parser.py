@@ -1,6 +1,6 @@
 import requests
+import bs4.element
 from bs4 import BeautifulSoup
-import brotli
 from typing import Any, List, Dict
 
 main_href = 'https://www.obi.ru'
@@ -23,8 +23,9 @@ def get_data(depth: List[Any]=[0,0,0,0]) -> List[Dict[str, Any]]:
                     depth[1] - depth of classes
                     depth[2] - depth of goods
                 Example: [{'Техника':['Электротовары'], 'Стройка':['Плитка', 'Окна']}, 1, 1]
-        returns: Dict[str, List[Any]]
+        returns: Dict[str, Any]
   '''
+
   header = {
         'authority': 'www.obi.ru',
         'method': 'GET',
@@ -55,13 +56,28 @@ def get_response(
         hr: str,
         header: Dict[str, Any]
 ) -> bs4.element.Tag:
+    '''
+        Returns result of get request
+        Args:
+            s: requests.Session - session object,
+            hr: str - html reference,
+            header: Dict[str, Any] - request header dict
+        Returns bs4.element.Tag
+    '''
+
     html = s.get(hr, headers=header)
-    html = brotli.decompress(html.content)
     html = BeautifulSoup(html)
     return html
 
 
 def get_properties(properties: bs4.element.Tag) -> List[Dict[str, str]]:
+    '''
+        Returns properties of a good
+        Args:
+            properties: bs4.element.Tag - list of properties in html
+        Returns List[Dict[str, str]]
+    '''
+
     result = []
     for prop in properties:
         text = prop.text.replace('  ', '').replace('\n', '')
@@ -77,6 +93,16 @@ def get_good(
         good: bs4.element.Tag,
         header: Dict[str, Any]
 ) -> Dict[str, Any]:
+    '''
+        Returns dict defining good
+        Args:
+            s: requests.Session - session object,
+            hr: str - html reference,
+            good: bs4.element.Tag - html defining good,
+            header: Dict[str, Any] - request header dict
+        Returns Dict[str, Any]
+    '''
+
     header['path'] = hr.split(main_href)[-1]
     html = get_response(s, hr, header)
 
@@ -94,6 +120,16 @@ def get_goods(
         header: Dict[str, Any],
         depth: List[Any] = [0]
 ) -> List[Dict[str, Any]]:
+    '''
+        Returns list of goods
+        Args:
+            s: requests.Session - session object,
+            html: bs4.element.Tag - html defining goods,
+            header: Dict[str, Any] - request header dict,
+            depth: List[Any] - depth object
+        Returns List[Dict[str, Any]]
+    '''
+
     result = []
     p = 0
     n = 0
@@ -127,6 +163,16 @@ def get_class(
         header: Dict[str, Any],
         depth: List[Any] = [0]
 ) -> Dict[str, Any]:
+    '''
+        Returns dict defining class
+        Args:
+            s: requests.Session - session object,
+            cl: bs4.element.Tag - html defining class,
+            header: Dict[str, Any] - request header dict,
+            depth: List[Any] - depth object
+        Returns Dict[str, Any]
+    '''
+
     header['path'] = cl.find('a').get('href')
     header[
         'accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
@@ -144,6 +190,16 @@ def get_classes(
         header: Dict[str, Any],
         depth: List[Any] = [0, 0]
 ) -> List[Dict[str, Any]]:
+    '''
+        Returns list of classes
+        Args:
+            s: requests.Session - session object,
+            html: bs4.element.Tag - html defining classes,
+            header: Dict[str, Any] - request header dict,
+            depth: List[Any] - depth object
+        Returns List[Dict[str, Any]]
+    '''
+
     result = []
     classes = html.find_all('div', {'class': 'headr__nav-cat-row'})
     if depth[0] == 0:
@@ -161,6 +217,16 @@ def get_subcategory(
         header: Dict[str, Any],
         depth: List[Any] = [0, 0]
 ) -> Dict[str, Any]:
+    '''
+        Returns dict defining subcategory
+        Args:
+            s: requests.Session - session object,
+            subcategory: bs4.element.Tag - html defining subcategory,
+            header: Dict[str, Any] - request header dict,
+            depth: List[Any] - depth object
+        Returns Dict[str, Any]
+    '''
+
     num_href = subcategory.find('a').get('href').split('/')[-1]
     header['path'] = '/header-service/navigation/ru/ru/categories/' + num_href
     html = get_response(s, category_href + num_href, header)
@@ -179,6 +245,17 @@ def get_subcategories(
         cat_name: str,
         depth: List[Any] = [0, 0, 0]
 ) -> List[Dict[str, Any]]:
+    '''
+        Returns list of subcategories
+        Args:
+            s: requests.Session - session object,
+            html: bs4.element.Tag - html object defining subcategories,
+            header: Dict[str, Any] - request header dict,
+            cat_name: str - parent category name,
+            depth: List[Any] - depth object
+        Returns List[Dict[str, Any]]
+    '''
+
     result = []
     subcategories = html.find_all('div', {'class': 'headr__nav-cat-row'})
 
@@ -201,6 +278,16 @@ def get_category(
         header: Dict[str, Any],
         depth: List[Any] = [0, 0, 0]
 ) -> Dict[str, Any]:
+    '''
+        Returns object defining category
+        Args:
+            s: requests.Session - session object,
+            category: bs4.element.Tag - object defining category,
+            header: Dict[str, Any] - request header dict,
+            depth: List[Any] - depth object
+        Returns Dict[str, Any]
+    '''
+
     num_href = category.find('a').get('href').split('/')[-1]
     header['path'] = '/header-service/navigation/ru/ru/categories/' + num_href
     header['accept'] = '*/*'
@@ -222,6 +309,16 @@ def get_categories(
         header: Dict[str, Any],
         depth: List[Any] = [0, 0, 0, 0]
 ) -> List[Dict[str, Any]]:
+    '''
+        Returns list of categories
+        Args:
+            s: requests.Session - session object,
+            html: bs4.element.Tag - object defining categories,
+            header: Dict[str, Any] - request header dict,
+            depth: List[Any] - depth object
+        Returns List[Dict[str, Any]]
+    '''
+
     result = []
     categories = html.find_all('div', {"class": "headr__nav-cat-row"})
 
