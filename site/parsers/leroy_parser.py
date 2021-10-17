@@ -14,10 +14,19 @@ def get_data(depth: List[Any] = [0, 0, 0, 0]) -> List[Dict[str, Any]]:
 
         Args:
             depth: List[int] - list of depths where:
-                depth[0] - depth of categrories
-                depth[1] - depth of subcategories
-                depth[2] - depth of classes
-                depth[3] - depth of goods
+                if you want all depths as int:
+                    depth[0] - depth of categories
+                    depth[1] - depth of subcategories
+                    depth[2] - depth of classes
+                    depth[3] - depth of goods
+                Example: [0, 0, 0, 0]
+
+                if you want get some special categories and subcategories:
+                    depth[0] - names of special categories as keys and
+                               names of special subcategories as values
+                    depth[1] - depth of classes
+                    depth[2] - depth of goods
+                Example: [{'Плитка':['Затирки для швов плитки'], 'Освещение':['Лампочки']}, 1, 5]
 
         returns: Dict[str, List[Any]]
     '''
@@ -32,11 +41,11 @@ def get_data(depth: List[Any] = [0, 0, 0, 0]) -> List[Dict[str, Any]]:
     for ind, cat in enumerate(to_parse):
         if isinstance(depth[0], dict):
             if cat['name'] in depth[0]:
-                result.append(parse_category(cat, depth))
+                result.append(parse_category(s, cat, depth))
         elif isinstance(depth[0], int):
             if ind > depth[0]:
                 break
-        result.append(parse_category(s, cat, depth[1:]))
+            result.append(parse_category(s, cat, depth[1:]))
 
     return result
 
@@ -151,7 +160,7 @@ def parse_class(s: requests.Session, cl: Dict[str, Any], depths: List[int] = [0]
             if offset >= depths[0]:
                 break
             offset += 1
-            dict_cl['goods'].append(parse_good(good))
+            dict_cl['goods'].append(parse_good(s, good))
     return dict_cl
 
 
@@ -190,7 +199,6 @@ def parse_category(s: requests.Session, cat: Dict[str, Any], depths: List[Any] =
 
         return: Dict[str, Any]
     '''
-
     dict_cat = dict(
         name=cat['name'],
         href=main_href + cat['sitePath'],
@@ -201,11 +209,11 @@ def parse_category(s: requests.Session, cat: Dict[str, Any], depths: List[Any] =
     for ind, sub in enumerate(cat['childs']):
         if isinstance(depths[0], dict):
             if sub['name'] in depths[0][cat['name']]:
-                dict_cat['subcategories'].append(parse_subcategory(sub, depths[1:]))
+                dict_cat['subcategories'].append(parse_subcategory(s, sub, depths[1:]))
         elif isinstance(depths[0], int):
             if ind > depths[0]:
                 break
-            dict_cat['subcategories'].append(parse_subcategory(sub, depths[1:]))
+            dict_cat['subcategories'].append(parse_subcategory(s, sub, depths[1:]))
     return dict_cat
 
 
