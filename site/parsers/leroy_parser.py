@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from typing import Tuple, Dict, Any, List
 
 
-def get_data(depth: List[int] = [0, 0, 0, 0]) -> Dict[str, List[Any]]:
+def get_data(depth: List[Any] = [0, 0, 0, 0]) -> List[Dict[str, Any]]:
     '''
         Returns the parsed data from the Leroy Merlin site
 
@@ -29,7 +29,13 @@ def get_data(depth: List[int] = [0, 0, 0, 0]) -> Dict[str, List[Any]]:
 
     if depth[0] == 0:
         depth[0] = len(to_parse)
-    for cat in to_parse[:depth[0]]:
+    for ind, cat in enumerate(to_parse):
+        if isinstance(depth[0], dict):
+            if cat['name'] in depth[0]:
+                result.append(parse_category(cat, depth))
+        elif isinstance(depth[0], int):
+            if ind > depth[0]:
+                break
         result.append(parse_category(s, cat, depth[1:]))
 
     return result
@@ -127,18 +133,25 @@ def parse_class(s: requests.Session, cl: Dict[str, Any], depths: List[int] = [0]
         "customerId": "GA1.2.1317799358.1634020624",
         "facets": [],
         "familyIds": [model['properties']['familyId']],
-        "limit": int(model['properties']['productsCount']),
+        "limit": 80,
         "offset": 0,
         "regionId": model['properties']['regionId'],
         "searchMethod": "DEFAULT",
         "suggest": "true"
     }
-    goods = json.loads(
-        s.post('https://api.leroymerlin.ru/hybrid/v1/getProducts', data=json.dumps(data), headers=header).text)
+    max_len = int(model['properties']['productsCount'])
+    offset = 0
     if depths[0] == 0:
-        depths[0] = len(goods['content'])
-    for good in goods['content'][:depths[0]]:
-        dict_cl['goods'].append(parse_good(s, good))
+        depths[0] = max_len
+    while offset < max_len and offset < depths[0]:
+        data['offset'] = offset
+        resp = s.post('https://api.leroymerlin.ru/hybrid/v1/getProducts', data=json.dumps(data), headers=header).text
+        goods = json.loads(resp)
+        for good in goods['content']:
+            if offset >= depths[0]:
+                break
+            offset += 1
+            dict_cl['goods'].append(parse_good(good))
     return dict_cl
 
 
@@ -166,7 +179,7 @@ def parse_subcategory(s: requests.Session, sub: Dict[str, Any], depths: List[int
     return dict_sub
 
 
-def parse_category(s: requests.Session, cat: Dict[str, Any], depths: List[int] = [0, 0, 0]) -> Dict[str, Any]:
+def parse_category(s: requests.Session, cat: Dict[str, Any], depths: List[Any] = [0, 0, 0]) -> Dict[str, Any]:
     '''
         Returns a parsed category object
 
@@ -185,8 +198,14 @@ def parse_category(s: requests.Session, cat: Dict[str, Any], depths: List[int] =
     )
     if depths[0] == 0:
         depths[0] = len(cat['childs'])
-    for sub in cat['childs'][:depths[0]]:
-        dict_cat['subcategories'].append(parse_subcategory(s, sub, depths[1:]))
+    for ind, sub in enumerate(cat['childs']):
+        if isinstance(depths[0], dict):
+            if sub['name'] in depths[0][cat['name']]:
+                dict_cat['subcategories'].append(parse_subcategory(sub, depths[1:]))
+        elif isinstance(depths[0], int):
+            if ind > depths[0]:
+                break
+            dict_cat['subcategories'].append(parse_subcategory(sub, depths[1:]))
     return dict_cat
 
 
