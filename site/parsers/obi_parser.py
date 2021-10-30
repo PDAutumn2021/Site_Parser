@@ -1,5 +1,6 @@
 import requests
 import bs4.element
+import html5lib
 from bs4 import BeautifulSoup
 from typing import Any, List, Dict
 
@@ -66,7 +67,10 @@ def get_response(
     '''
 
     html = s.get(hr, headers=header)
-    html = BeautifulSoup(html)
+    if len(html.links) > 0:
+        html = BeautifulSoup(html.content, 'html5lib')
+    else:
+        html = BeautifulSoup(html.text, 'html5lib')
     return html
 
 
@@ -335,3 +339,7 @@ def get_categories(
                 break
             result.append(get_category(s, category, header, depth[1:]))
     return result
+
+import pprint
+
+pprint.pprint(get_data([{'Техника':['Электротовары'], 'Стройка':['Плитка', 'Окна']}, 1, 1]))
