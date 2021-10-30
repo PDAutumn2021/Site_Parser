@@ -150,12 +150,14 @@ def get_goods(
                 continue
             result.append(get_good(s, goods.find('a').get('href'), good, header))
             n += 1
-        hr = html.find_all('a', {'class': 'pagination-bar__btn js-queryLink scrollup'})[-1].get('href')
-        header['accept'] = '*/*'
-        header['path'] = hr.split(main_href)[-1]
 
         if p != 0 and len(html.find_all('a', {'class': 'pagination-bar__btn js-queryLink scrollup disabled'})) != 0:
             break
+        elif len(html.find_all('a', {'class': 'pagination-bar__btn js-queryLink scrollup'})) == 0:
+            break
+        hr = html.find_all('a', {'class': 'pagination-bar__btn js-queryLink scrollup'})[-1].get('href')
+        header['accept'] = '*/*'
+        header['path'] = hr.split(main_href)[-1]
         html = get_response(s, hr, header)
         p += 1
     return result
@@ -339,7 +341,3 @@ def get_categories(
                 break
             result.append(get_category(s, category, header, depth[1:]))
     return result
-
-import pprint
-
-pprint.pprint(get_data([{'Техника':['Электротовары'], 'Стройка':['Плитка', 'Окна']}, 1, 1]))
