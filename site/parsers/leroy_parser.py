@@ -4,6 +4,7 @@ import re
 import json
 import bs4.element
 import requests
+import html5lib
 from bs4 import BeautifulSoup
 from typing import Tuple, Dict, Any, List
 
@@ -78,7 +79,7 @@ def get_response(s: requests.Session, href: str, timeout_range: Tuple = (5, 10))
   }
   time.sleep(random.randint(timeout_range[0], timeout_range[1]))
   response = s.get(href, headers=header)
-  html = BeautifulSoup(response.text)
+  html = BeautifulSoup(response.text, 'html5lib')
   return html
 
 
