@@ -86,7 +86,9 @@ def get_properties(properties: bs4.element.Tag) -> List[Dict[str, str]]:
     for prop in properties:
         text = prop.text.replace('  ', '').replace('\n', '')
         if ':' in text:
-            key, value = text.split(':')
+            text=text.partition(':')
+            key=text[0]
+            value = text[2]
             result.append(dict(name=key, value=value))
     return result
 
@@ -109,11 +111,15 @@ def get_good(
 
     header['path'] = hr.split(main_href)[-1]
     html = get_response(s, hr, header)
-
+    photo_href= html.find('img', {'class': 'ads-slider__image'})
+    if photo_href is None:
+        photo_href=""
+    else:
+        photo_href='https:' + photo_href.get('src')
     return dict(
         name=good.text.replace('  ', '').replace('\n', ''),
         href=hr,
-        photo='https:' + html.find('a', {'class': 'ads-slider__link js-ads-slider__zoom'}).get('href'),
+        photo=photo_href,
         properties=get_properties(html.find_all('tr'))
     )
 
