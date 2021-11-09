@@ -1,93 +1,74 @@
-import time
-import random
 import re
 import bs4.element
 import requests
+import html5lib
 from bs4 import BeautifulSoup
 from typing import Tuple, Dict, Any, List
 
+ITEMS_PER_PAGE = 20
+URL_SORT_PART = '?sort=title_asc'
+MAIN_URL = 'https://moscow.petrovich.ru/'
 result =[]
 s = requests.Session()
-
-
-def get_dataset():
-    main_data= s.get('https://moscow.petrovich.ru/')
-    soup = BeautifulSoup(main_data.text)
+'''
+Примеры заполнения аргументов
+    get_data(['Интерьер и отделка',['Обои','Керамическая плитка и затирки'],['Мозаика','Фотообои']])
+    get_data() - поиск всех данных вне зависимости от категорий
+'''
+def get_data(depth: List[Any] = [None, None, None, None]): #получаем значение и URL категорий, переходим на страницу выбранной категории
+    soup = find_soup(MAIN_URL)
     categories_ul = soup.find('ul', class_='pt-list___2KAzV sections-list-item')
     categories=categories_ul.find_all('li')
 
     for category in categories:
-        category_href ='https://moscow.petrovich.ru/'+ category.find('a').attrs['href']
+        category_href =MAIN_URL+ category.find('a').attrs['href']
         category_name=category.find('span')
         d={'name':category_name.text, 'href':category_href}
-        if (d['href']=='https://moscow.petrovich.ru//catalog/1533/'): #выбор категории "Интерьер и отделка"
-            #print('обработка субкатегории ',category_name.text)
-            d['subcategory']=parce_subcategory(d['href'])
-        result.append(d)
+        if (depth[0]==None) or ((d['name']==depth[0])): #выбор категории
+                d['subcategory']=parce_subcategory(d['href'],depth)
+                result.append(d)
     return result
 
-def parce_item(href):
+def parce_item(href: str): #Поиск товаров в выбранном классе по страницам
     d_arr=[]
-    i=0
-    items_data = s.get(href)
-    items_soup = BeautifulSoup(items_data.text)
-    items_div = items_soup.find('header', class_='product-list-header')
+    soup = find_soup(href)
+    items_div = soup.find('header', class_='product-list-header')
     items = items_div.find('p')
     item_number=items.text
     number=re.findall('\d+', item_number)
     number=int(number[0]) #количество товаров в данном классе
-
-    page=number//20 # количество страниц, на которых располагаются товары данного класса
+    page=number//ITEMS_PER_PAGE # номер страницы при отображении товаров
 
     k=0
     while (k<=page):
-        try:
-            items_data=None
-            if (k==0):
-                href_1=href+'?sort=title_asc'
-            else:
-                    href_1=href+'?sort=title_asc&p='+str(k)
-            items_data = s.get(href_1)
-            items_soup = BeautifulSoup(items_data.text)
-            items = items_soup.find_all('a', class_='title')
-            
-            for item in items:
-                i=i+1
-                #if (i>3): break      -для более быстрой проверки работы программы (удалить при полной уверенности в работоспособности программы)
-                d={}
-                item_href=item.attrs['href']
-                item_text = item.text
-                d['name']= item_text
-                d['href']='https://moscow.petrovich.ru/'+item_href
-                d['photo']=item_img(d['href'])
-                #print('№',i,' ',d['name'])
-                d['properties']=item_properties(d['href'])
-                d_arr.append(d)
-        except requests.exceptions.ConnectionError as e:
-            pass
-        except Exception as e:
-            logger.error(e)
-            randomtime = random.randint(1,5)
-            logger.warn('ERROR - Retrying again website %s, retrying in %d secs' % (url, randomtime))
-            time.sleep(randomtime)
-            continue
+        items_data=None
+        if (k==0):
+            href_1=href+URL_SORT_PART
+        else:
+            href_1=href+URL_SORT_PART+'p='+str(k)
+        soup = find_soup(href_1)
+        items = soup.find_all('a', class_='title')
+        for item in items:
+            d={}
+            d=add_name_and_url(item)
+            d['photo']=item_img(d['href'])
+            d['properties']=item_properties(d['href'])
+            d_arr.append(d)
         k=k+1
     return d_arr
+
     
-def item_img(href):
-    item_data = s.get (href)
-    item_soup = BeautifulSoup(item_data.text, "html.parser")
-    img = item_soup.find('div', class_='content-slide')
+def item_img(href: str):# поиск изображения товара со страницы описания товара
+    soup = find_soup(href)
+    img = soup.find('div', class_='content-slide')
     img = img.find('img').attrs['data-src']
     return (img)
 
 
-
-def item_properties(href):
+def item_properties(href: str):# поиск свойств товара со страницы описания товара
     d=[]
-    item_data = s.get (href)
-    item_soup = BeautifulSoup(item_data.text)
-    price_div = item_soup.find('div', class_='price-details')
+    soup = find_soup(href)
+    price_div = soup.find('div', class_='price-details')
     price_array = price_div.find_all('p')
     del price_array[0]
     #price_array[0].text - цена по скидке (по карте клуба)
@@ -97,7 +78,7 @@ def item_properties(href):
     d_prop['name']='Цена'
     d_prop['value']=price
 
-    item_properties_div = item_soup.find('ul', class_='product-properties-list listing-data')
+    item_properties_div = soup.find('ul', class_='product-properties-list listing-data')
     item_properties = item_properties_div.find_all('li')
     for property in item_properties:
         d_prop={}
@@ -108,29 +89,50 @@ def item_properties(href):
         d.append(d_prop)
     return (d)
 
-def parce_subcategory(href):
+
+def parce_subcategory(href: str, depth :List[Any]):#получаем значение и URL субкатегорий, переходим на страницу выбранной субкатегории
     d=[]
-    subcategory_data=s.get (href)
-    soup = BeautifulSoup(subcategory_data.text)
+    
+    soup = find_soup(href)
     subcategories = soup.find_all('a', class_='catalog-subsection')
     for subcategory in subcategories:
-        subcategory_href ='https://moscow.petrovich.ru/'+ subcategory.attrs['href']
-        subcategory_name =subcategory.text
-        d_sub={'name':subcategory_name, 'href':subcategory_href}
-        if (d_sub['href']=='https://moscow.petrovich.ru//catalog/1351/') or (d_sub['href']=='https://moscow.petrovich.ru//catalog/12102/'):# парсинг только плитки  и обоев
-            d_sub['classes']=parce_classes(d_sub['href'])
-        d.append(d_sub)
+        d_sub=add_name_and_url(subcategory)
+        if (depth[1]==None) or ((d_sub['name']==depth[1])):# выбор субкатегории
+            d_sub['classes']=parce_classes(d_sub['href'],depth)
+            d.append(d_sub)
+        else:
+            for dep in depth[1]:
+                if (d_sub['name']==dep):# выбор субкатегории
+                    d_sub['classes']=parce_classes(d_sub['href'], depth)
+                    d.append(d_sub)        
     return (d)
 
-def parce_classes(href):
+
+def parce_classes(href: str, depth: List[Any]):#получаем значение и URL классов, переходим на страницу выбранного класса
     d=[]
-    classes_data=s.get (href)
-    soup = BeautifulSoup(classes_data.text)
+    soup = find_soup(href)
     classes = soup.find_all('a', class_='catalog-subsection')
     for clas in classes:
-        class_href ='https://moscow.petrovich.ru/'+ clas.attrs['href']
-        class_name =clas.text
-        d={'name':class_name, 'href':class_href}
-        #print('обработка  класса ',class_name)
-        d['goods']=parce_item(d['href'])
+        d_class=add_name_and_url(clas)
+        if (depth[2]==None) or ((d_class['name']==depth[2])):# выбор класса, если аргумент для класса задан типами None и Str
+            d_class['goods']=parce_item(d_class['href'])
+            d.append(d_class)
+        else:
+            for dep in depth[2]:
+                if (d_class['name']==dep):# выбор класса, если аргумент для класса задан типом List
+                    d_class['goods']=parce_item(d_class['href'])
+                    d.append(d_class) 
     return (d)
+
+
+def add_name_and_url(item: bs4.element.Tag):# функция для заполнения основных характеристик объекта (URL и имя)
+    item_name=item.text
+    item_href=MAIN_URL+ item.attrs['href']
+    d={'name':item_name, 'href':item_href}
+    return(d)
+
+
+def find_soup(href: str):
+    classes_data=s.get (href)
+    soup = BeautifulSoup(classes_data.text, 'html5lib')
+    return(soup)
