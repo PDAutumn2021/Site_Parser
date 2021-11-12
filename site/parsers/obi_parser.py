@@ -116,10 +116,41 @@ def get_good(
         photo_href=""
     else:
         photo_href='https:' + photo_href.get('src')
+    
+    article_text = html.find('span',{'class': 'article-number'})
+    if article_text is None:
+        article_text = ""
+    else:
+        article_text = article_text.text
+        article_number = ''
+        for word in article_text:
+            if word.isdigit():
+                article_number = article_number + word
+        article_number = int(article_number)
+
+    price_text = html.find('strong',{'data-ui-name': 'ads.price.strong'})
+    if price_text is None:
+        price_text = ""
+    else:
+        price_text = price_text.text
+        price_text = price_text.replace(',', '.').replace(' ', '')
+        price_text = float(price_text)
+
+    description_text = []
+    descriptions = html.find('div',{'class': 'description-text js-toggle-additional-content toggle-additional-content toggle-additional-content--text-centered clearfix'})
+    descriptions = descriptions.find_all('p')
+    for p in descriptions:
+        p=p.text
+        description_text.append(p)
+    description_text[0]=''
+    
     return dict(
         name=good.text.replace('  ', '').replace('\n', ''),
         href=hr,
         photo=photo_href,
+        article = article_number,
+        price = price_text,
+        description = description_text,
         properties=get_properties(html.find_all('tr'))
     )
 
