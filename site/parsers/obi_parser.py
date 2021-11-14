@@ -139,11 +139,14 @@ def get_good(
     description_text = []
     descriptions = html.find('div',{'class': 'description-text js-toggle-additional-content toggle-additional-content toggle-additional-content--text-centered clearfix'})
     descriptions = descriptions.find_all('p')
-    for p in descriptions:
-        p=p.text
-        description_text.append(p)
-    description_text[0]=''
-    
+    if descriptions is None:
+        descriptions = ""
+    else:
+        for p in descriptions:
+            p=p.text
+            description_text.append(p)
+        description_text[0]=''
+
     return dict(
         name=good.text.replace('  ', '').replace('\n', ''),
         href=hr,
