@@ -131,6 +131,7 @@ def get_good(
     article_text = html.find('span',{'class': 'article-number'})
     if article_text is None:
         article_text = ""
+        article_number = ''
     else:
         article_text = article_text.text
         article_number = ''
@@ -155,6 +156,7 @@ def get_good(
         descriptions = descriptions.find_all('p')
         if descriptions is None:
             descriptions = ""
+            description_text = ''
         else:
             for p in descriptions:
                 p=p.text
@@ -167,9 +169,26 @@ def get_good(
         photo=photo_href,
         article = article_number,
         price = price_text,
-        description = description_text,
+        description = description_to_str(description_text),
         properties=get_properties(html.find_all('tr'))
     )
+
+
+def description_to_str(description: (list or str), joiner: str='\n'):
+    """Конвертирует описание из списока в строку
+    :param description: описание для объекта
+    :param joiner: строка, вставляемая между двумя элементами массива
+    :return: описание в формате строки
+    """
+    if isinstance(description, list):
+        answer = ''
+        for item in description:
+            if item:
+                answer += item + joiner
+        return answer
+    elif isinstance(description, str):
+        return description
+    return ''
 
 
 def get_goods(
