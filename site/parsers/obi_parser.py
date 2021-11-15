@@ -6,6 +6,7 @@ from typing import Any, List, Dict
 
 main_href = 'https://www.obi.ru'
 category_href = 'https://www.obi.ru/header-service/navigation/ru/ru/categories/'
+MAX_ATTEMPT_NUMBER = 5
 
 def get_data(depth: List[Any]=[0,0,0,0]) -> List[Dict[str, Any]]:
   '''
@@ -55,7 +56,8 @@ def get_data(depth: List[Any]=[0,0,0,0]) -> List[Dict[str, Any]]:
 def get_response(
         s: requests.Session,
         hr: str,
-        header: Dict[str, Any]
+        header: Dict[str, Any],
+        attempt: int = 1
 ) -> bs4.element.Tag:
     '''
         Returns result of get request
@@ -63,6 +65,7 @@ def get_response(
             s: requests.Session - session object,
             hr: str - html reference,
             header: Dict[str, Any] - request header dict
+            attempt: int - номер попытки запросить данные
         Returns bs4.element.Tag
     '''
 
@@ -71,6 +74,14 @@ def get_response(
         html = BeautifulSoup(html.content, 'html5lib')
     else:
         html = BeautifulSoup(html.text, 'html5lib')
+
+    # если нас забанили, то ждем 15 секунд и отправляем запрос снова (пока не пустят)
+    if html.text.find('Ð£Ð²Ð°Ð¶Ð°ÐµÐ¼ÑÐµ Ð¿Ð¾ÑÐµÑÐ¸ÑÐµÐ»Ð¸!') > 0 and attempt <= MAX_ATTEMPT_NUMBER:
+        time.sleep(15.)
+        html = get_response(s, hr, header, attempt+1)
+    elif attempt > MAX_ATTEMPT_NUMBER:
+        raise Exception('Поздравляю, нас забанили! ')
+
     return html
 
 
@@ -116,12 +127,68 @@ def get_good(
         photo_href=""
     else:
         photo_href='https:' + photo_href.get('src')
+    
+    article_text = html.find('span',{'class': 'article-number'})
+    if article_text is None:
+        article_text = ""
+        article_number = ''
+    else:
+        article_text = article_text.text
+        article_number = ''
+        for word in article_text:
+            if word.isdigit():
+                article_number = article_number + word
+        article_number = int(article_number)
+
+    price_text = html.find('strong',{'data-ui-name': 'ads.price.strong'})
+    if price_text is None:
+        price_text = ""
+    else:
+        price_text = price_text.text
+        price_text = price_text.replace(',', '.').replace(' ', '')
+        price_text = float(price_text)
+
+    description_text = []
+    descriptions = html.find('div',{'class': 'description-text js-toggle-additional-content toggle-additional-content toggle-additional-content--text-centered clearfix'})
+    if descriptions is None:
+        descriptions = ""
+    else:
+        descriptions = descriptions.find_all('p')
+        if descriptions is None:
+            descriptions = ""
+            description_text = ''
+        else:
+            for p in descriptions:
+                p=p.text
+                description_text.append(p)
+            description_text[0]=''
+
     return dict(
         name=good.text.replace('  ', '').replace('\n', ''),
         href=hr,
         photo=photo_href,
+        article = article_number,
+        price = price_text,
+        description = description_to_str(description_text),
         properties=get_properties(html.find_all('tr'))
     )
+
+
+def description_to_str(description: (list or str), joiner: str='\n'):
+    """Конвертирует описание из списока в строку
+    :param description: описание для объекта
+    :param joiner: строка, вставляемая между двумя элементами массива
+    :return: описание в формате строки
+    """
+    if isinstance(description, list):
+        answer = ''
+        for item in description:
+            if item:
+                answer += item + joiner
+        return answer
+    elif isinstance(description, str):
+        return description
+    return ''
 
 
 def get_goods(
