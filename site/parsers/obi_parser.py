@@ -6,6 +6,7 @@ from typing import Any, List, Dict
 
 main_href = 'https://www.obi.ru'
 category_href = 'https://www.obi.ru/header-service/navigation/ru/ru/categories/'
+MAX_ATTEMPT_NUMBER = 5
 
 def get_data(depth: List[Any]=[0,0,0,0]) -> List[Dict[str, Any]]:
   '''
@@ -55,7 +56,8 @@ def get_data(depth: List[Any]=[0,0,0,0]) -> List[Dict[str, Any]]:
 def get_response(
         s: requests.Session,
         hr: str,
-        header: Dict[str, Any]
+        header: Dict[str, Any],
+        attempt: int = 1
 ) -> bs4.element.Tag:
     '''
         Returns result of get request
@@ -63,6 +65,7 @@ def get_response(
             s: requests.Session - session object,
             hr: str - html reference,
             header: Dict[str, Any] - request header dict
+            attempt: int - номер попытки запросить данные
         Returns bs4.element.Tag
     '''
 
@@ -71,6 +74,14 @@ def get_response(
         html = BeautifulSoup(html.content, 'html5lib')
     else:
         html = BeautifulSoup(html.text, 'html5lib')
+
+    # если нас забанили, то ждем 15 секунд и отправляем запрос снова (пока не пустят)
+    if html.text.find('Ð£Ð²Ð°Ð¶Ð°ÐµÐ¼ÑÐµ Ð¿Ð¾ÑÐµÑÐ¸ÑÐµÐ»Ð¸!') > 0 and attempt <= MAX_ATTEMPT_NUMBER:
+        time.sleep(15.)
+        html = get_response(s, hr, header, attempt+1)
+    elif attempt > MAX_ATTEMPT_NUMBER:
+        raise Exception('Поздравляю, нас забанили! ')
+
     return html
 
 
