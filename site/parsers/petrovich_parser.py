@@ -141,7 +141,7 @@ def parce_classes(href: str, depth: List[Any]):#получаем значени�
         else:
             for dep in depth[2]:
                 if (d_class['name']==dep): # выбор класса, если аргумент для класса задан типом List
-                    d['goods']=parce_item(d_class['href'])
+                    d_class['goods']=parce_item(d_class['href'])
                     d.append(d_class) 
     return (d)
 
