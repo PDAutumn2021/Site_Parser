@@ -6,7 +6,7 @@
     <th>Подкласс</th>
   </tr>
   <tr>
-    <td rowspan="5">Обои</td>
+    <td rowspan="6">Обои</td>
     <td>Флизелиновые обои</td>
   </tr>
   <tr>
