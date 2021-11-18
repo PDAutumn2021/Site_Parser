@@ -1,0 +1,27 @@
+{% extends 'www/base.html' %}
+{% block title %}
+Авторизация
+{% endblock %}
+
+{% block topictext %}
+Авторизация
+{% endblock %}
+
+{% block content %}
+  <form action="#">
+    <div class="regContainer">
+
+      <label for="email"><b>Email</b></label>
+      <input type="text" id="regText" placeholder="Введите Email" name="email" required>
+
+      <label for="psw"><b>Пароль</b></label>
+      <input type="password" placeholder="Введите пароль" name="psw" required>
+
+      <button type="submit" class="registerbtn">Авторизироваться</button>
+    </div>
+
+    <div class="regContainer signin">
+      <p>У вас нет акаунта? <a href="{% url 'registrationPage' %}">Зарегистрируйтесь</a>.</p>
+    </div>
+  </form>
+{% endblock %}

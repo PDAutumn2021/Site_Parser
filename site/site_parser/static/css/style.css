@@ -1,0 +1,570 @@
+.pageContent{
+    display: flex;
+    margin: 10px;
+    }
+.mainContent{
+    margin: 10px;
+    width: 90%;
+    height: 10%;
+    }
+.mainContentText{
+    margin: 10px;
+    background : #ffc107;
+    padding: 5px;
+    text-align: center;
+    border-radius: 10px;
+    }
+/*----------------------Карточка товара----------------------*/
+.productName{
+    display: flex;
+}
+.productsList{
+	display: inline;
+	margin: 2%;
+	text-align: center;
+}
+.product{
+    background-color: #edf9ff;
+    width: 90%;
+	border-radius: 10px;
+	margin-bottom: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	display: flex;
+}
+.product-img{
+	margin: 2%;
+	width: 15%;
+	height: 150px;
+	border: 2px solid black;
+}
+.product-text{
+    width: 85%;
+    margin-top: 2%;
+	margin-right: 2%;
+	margin-bottom: 2%;
+}
+.product-text h2{
+	font-size: 25px;
+	text-align: left;
+}
+.product-text h4{
+	font-size: 15px;
+	text-align: right;
+}
+.product-text p{
+	text-align: left;
+}
+.price{
+    color: red;
+    margin-left: 90%;
+    font-size: 30px;
+}
+.product-text a{
+	color: #007cba;
+	text-decoration: none;
+	padding: 3px;
+	border: 2px solid #007cba;
+	border-radius: 5px;
+}
+
+/*----------------------Выпадающий список характеристики----------------------*/
+.info__switch {
+    display: none;
+}
+.info__body {
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.4s;
+    text-align: left;
+}
+.info__switch:checked~.info__body {
+    max-height: 100px;
+}
+.info__headline::before {
+    content: "";
+    position: absolute;
+    left: 150px;
+    top: 10px;
+    border: 6px solid #39739d;
+    border-bottom-color: transparent;
+    border-right-color: transparent;
+    border-left-color: transparent;
+}
+.info__switch:checked~.info__headline::before {
+    transform: rotate(180deg) translateY(6px);
+}
+.info__headline {
+    display: block;
+    position: relative;
+    margin-bottom: 15px;
+    user-select: none;
+    color: #39739d;
+    font-weight: normal;
+    cursor: pointer;
+    text-align: left;
+}
+.info__headline:hover {
+    text-decoration: none;
+}
+
+/*----------------------Страница товара----------------------*/
+.productInf{
+	margin-right: 1%;
+	margin-left: 1%;
+	display: flex;
+}
+.productInf p{
+	padding: 5px;
+}
+.productInf a{
+	color: black;
+}
+.productInf a:hover{
+	color: #f3642d;
+}
+.leftSection{
+	margin-right: 1%;
+	width: 30%;
+}
+.leftSection img{
+	width: 100%;
+	padding-bottom:5px;
+	border-radius: 10px;
+}
+.aboutProduct{
+/*	background-color: #edf9ff; */
+	padding: 15px;
+	border-radius: 10px;
+}
+.aboutProduct input[type=submit]{
+	background-color: #e9e7e7;
+	padding: 5px;
+	margin-right: 5%;
+	border: 1px solid grey;
+	text-align:left;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 16;
+	font-family:TimeNewRoman;
+}
+.aboutProduct input[type=submit]:hover {
+	color: #f3642d;
+	border: 1px solid #f3642d;
+}
+.rightSection{
+	padding-left: 5px;
+	padding-right: 5px;
+	width: 70%;
+	background-color: #edf9ff;
+	border-radius: 10px;
+}
+.rightSection table{
+    margin: 0px;
+    width: 100%;
+	padding: 15px;
+}
+.rightSection h3{
+	text-align:left;
+	padding:5px;
+	font-size: 20px;
+}
+/*-------Рейтинг и цена-------*/
+.ratingPrice{
+    display:flex;
+}
+.rating a{
+    text-decoration: none;
+}
+.prodPrice{
+    width:70%;
+    text-align: right;
+    margin: auto;
+}
+.prodPrice h1{
+    color: red;
+}
+.charText{
+    display:flex;
+}
+.charText p{
+    margin:0;
+}
+.charTextLeft{
+    width:15%;
+}
+.charTextRight{
+    width:70%;
+}
+
+
+
+/*-------перематывание картинок товара-------*/
+.sim-slider {
+    margin: 20px auto;
+    padding: 30px 50px;
+    height: 50%;
+    border: 1px solid #ccd;
+    background-color: white;
+}
+
+/* General styles */
+.sim-slider {
+    position: relative;
+}
+
+.sim-slider-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    position: relative;
+}
+
+.sim-slider-element {
+    width: 100%;
+    transition: opacity 1s ease-in;
+    opacity: 0;
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    display: block;
+}
+
+/* Navigation item styles */
+div.sim-slider-arrow-left,
+div.sim-slider-arrow-right {
+    width: 22px;
+    height: 40px;
+    position: absolute;
+    cursor: pointer;
+    opacity: 0.6;
+    z-index: 4;
+}
+
+div.sim-slider-arrow-left {
+    left: 10px;
+    top: 40%;
+    display: block;
+    background: url("http://pvbk.spb.ru/inc/slider/sim-files/sim-arrow-left.png") no-repeat;
+}
+
+div.sim-slider-arrow-right {
+    right: 10px;
+    top: 40%;
+    display: block;
+    background: url("http://pvbk.spb.ru/inc/slider/sim-files/sim-arrow-right.png") no-repeat;
+}
+
+div.sim-slider-arrow-left:hover {
+    opacity: 1.0;
+}
+
+div.sim-slider-arrow-right:hover {
+    opacity: 1.0;
+}
+
+div.sim-slider-dots {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 3;
+    text-align: center;
+}
+
+span.sim-dot {
+    width: 10px;
+    height: 10px;
+    margin: 5px 7px;
+    padding: 0;
+    display: inline-block;
+    background-color: #BBB;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+
+
+/*-------Похожие товары-------*/
+.sameProduct{
+    background-color: #edf9ff;
+    margin: 10px;
+    padding: 5px;
+    text-align: center;
+    border-radius: 10px;
+    padding-bottom:30px;
+}
+/*-------перематывание картинок похожих товаров-------*/
+@media screen and (min-width: 850px) {
+  .ant-carousel {
+    max-width: 1150px;
+  }
+}
+@media screen and (min-width: 641px) and (max-width: 910px) {
+  .ant-carousel {
+    max-width: 540px;
+  }
+}
+@media screen and (max-width: 640px) {
+  .ant-carousel {
+    max-width: 300px;
+  }
+}
+.ant-carousel {
+  margin: 10px auto auto;
+  padding-top: 10px;
+}
+
+.ant-carousel-element {
+  width: 270px;
+  text-align: center;
+  margin: 10px;
+}
+.ant-carousel-element img{
+    width:100%;
+}
+/* General styles */
+.ant-carousel {
+  width: auto;
+  position: relative;
+}
+
+.ant-carousel-hider {
+  overflow: hidden;
+}
+
+.ant-carousel-list {
+  width: auto;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.ant-carousel-element {
+  display: block;
+  flex: 0 0 auto;
+}
+
+/* Navigation item styles */
+div.ant-carousel-arrow-left,
+div.ant-carousel-arrow-right {
+  width: 22px;
+  height: 40px;
+  position: absolute;
+  cursor: pointer;
+  opacity: 0.6;
+  z-index: 32;
+}
+
+div.ant-carousel-arrow-left {
+  left: -40px;
+  top: 40%;
+  display: block;
+  background: url("http://pvbk.spb.ru/inc/carousel/ant-files/ant-arrow-left.png") no-repeat;
+}
+
+div.ant-carousel-arrow-right {
+  right: -40px;
+  top: 40%;
+  display: block;
+  background: url("http://pvbk.spb.ru/inc/carousel/ant-files/ant-arrow-right.png") no-repeat;
+}
+
+div.ant-carousel-arrow-left:hover {
+  opacity: 1.0;
+}
+
+div.ant-carousel-arrow-right:hover {
+  opacity: 1.0;
+}
+
+div.ant-carousel-dots {
+  width: 100%;
+  height: auto;
+  position: absolute;
+  left: 0;
+  bottom: -30px;
+  z-index: 30;
+  text-align: center;
+}
+
+span.ant-dot {
+  width: 10px;
+  height: 10px;
+  margin: 5px 7px;
+  padding: 0;
+  display: inline-block;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+/*-------отзывы-------*/
+.reviews{
+    margin: 20px;
+}
+.reviews h1{
+    text-align:center;
+}
+.reviewsContainer {
+    width: 75%;
+    border: 2px solid #e8e9eb;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px auto;
+}
+.reviewsContainer img {
+    float: left;
+    margin-right: 20px;
+    border-radius: 50%;
+    width: 90px;
+}
+.reviewsContainer span {
+    font-size: 18px;
+    margin-right: 15px;
+}
+@media (max-width: 450px) {
+        .container {
+        text-align: center;
+    }
+    .reviewsContainer img {
+        margin: auto;
+        float: none;
+        display: block;
+    }
+}
+
+
+/*-------Регистрация-------*/
+.regContainer {
+
+    width: 60%;
+    margin: auto;
+}
+.regContainer input[type=text], input[type=password] {
+    width: 100%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    display: inline-block;
+    border: none;
+    background: #f1f1f1;
+}
+.regContainer input[type=text]:focus, input[type=password]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+.regContainer label{
+    margin-left:1px;
+}
+.registerbtn {
+    background-color: #0d6efd;
+    color: white;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+}
+.registerbtn:hover {
+    opacity:1;
+}
+.regContainer a {
+    color: dodgerblue;
+}
+.signin {
+    background-color: #f1f1f1;
+    text-align: center;
+    padding: 5px;
+    margin-top: 20px;
+    margin-bottom:0;
+}
+.signin p{
+    margin: 5px;
+}
+.like{
+    margin-top: 7px;
+	margin-left: -155px;
+	width:30px;
+	height:30px;
+	cursor: pointer;
+}
+#star{
+    margin: 0;
+	width:40px;
+	height:40px;
+	cursor: pointer;
+}
+
+
+/*-------Фильтр-------*/
+.dropbtn {
+    width: 25px;
+    height: 25px;
+    background-color: Transparent;
+    border: 0px;
+    cursor: pointer;
+}
+.dropbtn img{
+    width: 25px;
+    height: 25px;
+}
+.myInput {
+    border-box: box-sizing;
+    background-position: 14px 12px;
+    background-repeat: no-repeat;
+    font-size: 16px;
+    padding: 14px 20px 12px 10px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+}
+.myInput:focus {outline: 3px solid #ddd;}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f8f9fa;
+    min-width: 230px;
+    overflow: auto;
+    border: 1px solid #ddd;
+    z-index: 1;
+    border-radius: 5px;
+}
+.dropdown-content p {
+    color: black;
+    font-size: 20px;
+    margin:0;
+    display: block;
+}
+.dropdown-content label {
+    color: black;
+    margin-left: 5px;
+    font-size: 15px;
+}
+.dropdown-content hr {
+    margin: 5px;
+}
+.dropdown-content button{
+    color: black;
+    margin: auto;
+    margin-bottom: 5px;
+    margin-top: -10px;
+    font-size: 18px;
+    border-radius: 10px;
+    background-color: #0d6efd;
+    color:white;
+}
+.filtDiv{
+    margin:10px;
+    padding:0;
+    font-size: 5px;
+    text-align: left
+}
+.dropdown a:hover {background-color: #ddd;}
+.show {display: block;}
