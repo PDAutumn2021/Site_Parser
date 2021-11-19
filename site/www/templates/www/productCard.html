@@ -1,0 +1,23 @@
+<div class="product">
+    <div class="product-img">
+        {% load static %}
+        <img src='{% static "images/default3.png" %}' width="100%" height="100%">
+    </div>
+
+    <div class="product-text">
+        <div class="productName">
+            <h2>{{ name }}</h2>
+            <img src="{% static 'images/star-white.png' %}" class="like">
+            <p class="price">{{ price }} р</p> </div>
+        <p>{{ description }}</p>
+        <div class="info">
+          <input id="{{ id }}" class="info__switch" type="checkbox">
+          <label for="{{ id }}" class="info__headline">Все характеристики</label>
+          <div class="info__body">
+              {{ characteristics }}
+          </div>
+        </div>
+        <h4><a href="{{ productLink }}">Подробнее</a></h4>
+    </div>
+
+</div>

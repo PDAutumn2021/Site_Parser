@@ -1,0 +1,81 @@
+{% extends 'www/base.html' %}
+
+{% block title %}
+Поиск "Вы сможете сюда вставить что ввел в поиск пользователь?"
+{% endblock %}
+
+{% block topictext %}
+Нашлось "вставить количество" товаров
+
+{% load static %}
+
+<div class="dropdown">
+<button onclick="myFunction()" class="dropbtn"><img src="{% static 'images/filt.png' %}" alt="фильтр"></button>
+  <div id="myDropdown" class="dropdown-content">
+    <p>Цена</p>
+    <input type="text" placeholder="от" class="myInput" name ="minPrice">
+    <input type="text" placeholder="до" class="myInput" name ="maxPrice">
+
+    <hr>
+    <p>Производитель</p>
+        <div class="filtDiv">
+            <input type="checkbox" id='manufacturer1' name="manufacturer1">
+            <label for="manufacturer1">Производитель 1</label>
+        </div>
+        <div class="filtDiv">
+            <input type="checkbox" id='manufacturer2' name="manufacturer2">
+            <label for="manufacturer2">Производитель 2</label>
+        </div>
+        <div class="filtDiv">
+            <input type="checkbox" id='manufacturer3' name="manufacturer3">
+            <label for="manufacturer3">Производитель 3</label>
+        </div>
+        <hr>
+        <p>Цвет</p>
+        <div class="filtDiv">
+            <input type="checkbox" id='color1' name="color1">
+            <label for="color1">Цвет 1</label>
+        </div>
+        <div class="filtDiv">
+            <input type="checkbox" id='color2' name="color2">
+            <label for="color2">Цвет 2</label>
+        </div>
+        <div class="filtDiv">
+            <input type="checkbox" id='color3' name="color3">
+            <label for="color3">Цвет 3</label>
+        </div>
+        <button type="submit" onclick="location.href='#';">Применить</button>
+  </div>
+</div>
+<script>
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+
+function filterFunction() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    div = document.getElementById("myDropdown");
+    a = div.getElementsByTagName("a");
+    for (i = 0; i < a.length; i++) {
+        if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            a[i].style.display = "";
+        } else {
+            a[i].style.display = "none";
+        }
+    }
+}
+</script>
+
+{% endblock %}
+
+{% block products %}
+
+{% include "www/productCard.html" with image="main/images/default.png" id="info_body_1" name="Товар 1" price="12 000" description="Описание" productLink="product" characteristics="характеристика 1<br>характеристика 2<br>характеристика 3<br>характеристика 4<br>" %}
+{% include "www/productCard.html" with image="main/images/default.png" id="info_body_2" name="Товар 2" price="110 000" description="Описание" productLink="product" characteristics="характеристика 1<br>характеристика 2<br>характеристика 3<br>характеристика 4<br>" %}
+{% include "www/productCard.html" with image="main/images/default.png" id="info_body_3" name="Товар 3" price="1 000" description="Описание" productLink="product" characteristics="характеристика 1<br>характеристика 2<br>характеристика 3<br>характеристика 4<br>" %}
+
+{% endblock %}

@@ -28,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -78,6 +77,7 @@ WSGI_APPLICATION = 'site_parser.wsgi.application'
 
 DATABASES = {
     'default': DB
+
 }
 
 
