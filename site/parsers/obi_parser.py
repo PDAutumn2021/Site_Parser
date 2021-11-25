@@ -429,7 +429,7 @@ def get_goods(
             good = goods.find('p')
             if good is None or good.text.replace('  ', '').replace('\n', '') == '':
                 continue
-            result = result + get_good(s, goods.find('a').get('href'), good, header, cl, subcategory_name)
+            result.append(get_good(s, goods.find('a').get('href'), good, header, cl, subcategory_name))
             n += 1
 
         if p != 0 and len(html.find_all('a', {'class': 'pagination-bar__btn js-queryLink scrollup disabled'})) != 0:
