@@ -501,7 +501,7 @@ def get_classes(
         else:
             if ind >= depth[0]:
                 break
-            result = result + get_class(s subcategory_name,, cl, header, depth[1:])
+            result = result + get_class(s, subcategory_name, cl, header, depth[1:])
     return result
 
 
@@ -624,3 +624,6 @@ def get_categories(
                 break
             result = result + get_category(s, category, header, depth[1:])
     return result
+    
+    cl_name_wp=['Фотообои', 'Обои под покраску']
+    cl_name_tile=['Керамическая плитка', 'Керамогранит', 'Плитка-мозаика']
