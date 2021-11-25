@@ -1,3 +1,4 @@
+import time
 import requests
 import bs4.element
 import html5lib
@@ -428,7 +429,7 @@ def get_goods(
             good = goods.find('p')
             if good is None or good.text.replace('  ', '').replace('\n', '') == '':
                 continue
-            result.append(get_good(s, goods.find('a').get('href'), good, header, cl, subcategory_name))
+            result = result + get_good(s, goods.find('a').get('href'), good, header, cl, subcategory_name)
             n += 1
 
         if p != 0 and len(html.find_all('a', {'class': 'pagination-bar__btn js-queryLink scrollup disabled'})) != 0:
@@ -556,7 +557,7 @@ def get_subcategories(
     for ind, subcategory in enumerate(subcategories):
         if isinstance(depth[0], dict):
             if subcategory.text.replace('  ', '').replace('\n', '') in depth[0][cat_name]:
-                result.append(get_subcategory(s, subcategory, header, depth[1:]))
+                result = result + get_subcategory(s, subcategory, header, depth[1:])
         elif isinstance(depth[0], int):
             if ind >= depth[0]:
                 break
@@ -618,7 +619,7 @@ def get_categories(
             break
         if isinstance(depth[0], dict):
             if category.text.replace('  ', '').replace('\n', '') in depth[0]:
-                result.append(get_category(s, category, header, depth))
+                result = result + get_category(s, category, header, depth)
         elif isinstance(depth[0], int):
             if ind >= depth[0]:
                 break
