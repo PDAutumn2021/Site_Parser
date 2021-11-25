@@ -626,5 +626,4 @@ def get_categories(
             result = result + get_category(s, category, header, depth[1:])
     return result
     
-    cl_name_wp=['Фотообои', 'Обои под покраску']
-    cl_name_tile=['Керамическая плитка', 'Керамогранит', 'Плитка-мозаика']
+   
