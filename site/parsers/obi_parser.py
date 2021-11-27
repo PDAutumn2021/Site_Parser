@@ -8,6 +8,8 @@ from typing import Any, List, Dict
 main_href = 'https://www.obi.ru'
 category_href = 'https://www.obi.ru/header-service/navigation/ru/ru/categories/'
 MAX_ATTEMPT_NUMBER = 5
+cl_name_wp=['Фотообои', 'Обои под покраску']
+cl_name_tile=['Керамическая плитка', 'Керамогранит', 'Плитка-мозаика']
 
 def get_data(depth: List[Any]=[0,0,0,0]) -> List[Dict[str, Any]]:
   '''
