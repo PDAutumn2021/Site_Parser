@@ -1,3 +1,4 @@
+import time
 import requests
 import bs4.element
 import html5lib
@@ -7,6 +8,8 @@ from typing import Any, List, Dict
 main_href = 'https://www.obi.ru'
 category_href = 'https://www.obi.ru/header-service/navigation/ru/ru/categories/'
 MAX_ATTEMPT_NUMBER = 5
+cl_name_wp=['Фотообои', 'Обои под покраску']
+cl_name_tile=['Керамическая плитка', 'Керамогранит', 'Плитка-мозаика']
 
 def get_data(depth: List[Any]=[0,0,0,0]) -> List[Dict[str, Any]]:
   '''
@@ -85,22 +88,222 @@ def get_response(
     return html
 
 
-def get_properties(properties: bs4.element.Tag) -> List[Dict[str, str]]:
+def get_properties(properties: bs4.element.Tag, subcategory_name: str) -> List[Dict[str, str]]:
     '''
         Returns properties of a good
         Args:
             properties: bs4.element.Tag - list of properties in html
         Returns List[Dict[str, str]]
     '''
-
+    countries=['Россия', 'Белоруссия', 'Украина', 'Китай', 'Турция', 'Испания', 'Индия', 'Италия', 'Вьетнам', 'Словакия', 'Бельгия', 'Германия', 'Великобритания', 'Республика Корея']
     result = []
     for prop in properties:
         text = prop.text.replace('  ', '').replace('\n', '')
         if ':' in text:
-            text=text.partition(':')
-            key=text[0]
+            text = text.partition(':')
+            key = text[0]
             value = text[2]
-            result.append(dict(name=key, value=value))
+            if subcategory_name == "Обои":
+                if "Материал основы" in key:
+                    val_names = ['Флизелин', 'Бумага', 'Винил', 'Стеклоткань']
+                    if value in val_names:
+                        result.append(dict(name=key, value=value))
+                    else:
+                        result.append(dict(name=key, value="Другое"))
+                
+                elif "Длина рулона" in key:
+                    value = value.split(" ")
+                    value_num = value[0].split(',')
+                    value_num = '.'.join(value_num)
+                    val = float(value_num)
+                    result.append(dict(name=key, value=val))
+                    
+                elif "Ширина рулона" in key:
+                    value = value.split(" ")
+                    value_num = value[0].split(',')
+                    value_num = '.'.join(value_num)
+                    val = float(value_num)
+                    result.append(dict(name=key, value=val))
+                
+                elif "Материал покрытия" in key:
+                    val_names = ['Флизелин', 'Бумага', 'Винил', 'Стеклоткань']
+                    if value in val_names:
+                        result.append(dict(name=key, value=value))
+                    else:
+                        result.append(dict(name=key, value="Другое"))
+                
+                elif "Помещение" in key:
+                    val_names = ['Производственное помещение', 'Жилая комната', 'Кухня', 'Детская']
+                    if value == "Офис":
+                        value = "Производственное помещение"
+                    if value in val_names:
+                        result.append(dict(name=key, value=value))
+                    else:
+                        result.append(dict(name=key, value="Жилая комната"))
+                
+                elif "Дизайн" in key:
+                    key = "Дизайн / Рисунок"
+                    val_names = ['Орнамент', 'Однотонный', 'Полосы', 'Фотопринт', 'Имитация материала', 'Надписи', 'Рисунок']
+                    if value in val_names:
+                        if value == "Орнамент":
+                            value = "Узор"
+                        result.append(dict(name=key, value=value))
+                    else:
+                        result.append(dict(name=key, value="Другое"))
+                
+                elif "Фактура" in key:
+                    val_names = ['Гладкая', 'Рельефная']
+                    if value in val_names:
+                        result.append(dict(name=key, value=value))
+                    else:
+                        result.append(dict(name=key, value="Другое"))
+                
+                elif "Стыковка полотен" in key:
+                    val_names = ['С подбором рисунка', 'Без подбора рисунка']
+                    if value in val_names:
+                        result.append(dict(name=key, value=value))
+                    elif value == "Смещенное наложение рисунка":
+                        result.append(dict(name=key, value="С подбором рисунка"))
+                    else:
+                        result.append(dict(name=key, value="Без подбора рисунка"))
+                    
+                elif "Вес" in key:
+                    key = "Вес упаковки"
+                    value = value.split(" ")
+                    value_num = value[0].split(',')
+                    value_num = '.'.join(value_num)
+                    val = float(value_num)
+                    if value[1] == "г":
+                        val = val/1000
+                    result.append(dict(name=key, value=val))
+                
+                elif "Страна производства" in key:
+                    if value in countries:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Другое"))
+            
+            
+            if subcategory_name == "Плитка":   
+                if "Оттенок" in key:
+                    val_names = ['Светлый','Темный','Комбинированный']
+                    if value in val_names:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Другое"))
+                
+                elif "Поверхность" in key:
+                    val_names = ['Глянцевая','Рельефная','Матовая']
+                    if value in val_names:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Другое"))
+                
+                elif "Материал" in key:
+                    val_names = ['Керамика','Глина','Натуральный камень', 'Гипс', 'Керамогранит', 'Клинкер', 'Цемент', 'Бетон', 'Пластик', 'Стекло', 'Металл', 'Мрамор', 'Дерево', 'Резина']
+                    if value in val_names:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Другое"))
+                
+                elif "Форма" in key:
+                    val_names = ['Прямоугольник','Квадрат','Шестигранник', 'Угол', 'Треугольник', 'Произвольная', 'Восьмигранник']
+                    if value in val_names:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Произвольная"))
+                    
+                elif "Ширина" in key:
+                    for result_part in result:
+                        if "Ширина" in result_part.values():
+                            break
+                    else:
+                        value = value.split(" ")
+                        value_num = value[0].split(',')
+                        value_num = '.'.join(value_num)
+                        val = float(value_num)
+                        result.append(dict(name=key, value=val))
+                
+                elif "Вид работ" in key:
+                    val_names = ['Внутренние','Наружные']
+                    if value in val_names:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Внутренние"))
+                
+                elif "Поверхность укладки" in key:
+                    val_names = ['Стена','Пол', 'Фасад','Цоколь','Лестница']
+                    if value in val_names:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Другое"))
+                
+                elif "Тип помещений" in key:
+                    val_names = ['Сухие','Влажные']
+                    if value in val_names:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Сухие"))
+                
+                elif "Помещение" in key:
+                    val_names = ['Кухня','Ванная комната','Производственное помещение','Жилая комната']
+                    if value == "Офис":
+                        value = "Производственное помещение"
+                    if value in val_names:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Жилая комната"))
+                
+                elif "Дизайн" in key:
+                    val_names = ['Однотонный','Имитация материала','Орнамент','Авторский', 'Мозаика']
+                    if value in val_names:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Другое"))
+                
+                elif "Количество в упаковке" in key:
+                    value = value.split(" ")
+                    val = int(value[0])
+                    result.append(dict(name="Кол-во в упаковке", value=val))
+                
+                elif "Площадь элемента" in key:
+                    value = value.split(" ")
+                    value_num = value[0].split(',')
+                    value_num = '.'.join(value_num)
+                    val = float(value_num)
+                    result.append(dict(name=key, value=val))
+                
+                elif "Длина" in key:
+                    value = value.split(" ")
+                    value_num = value[0].split(',')
+                    value_num = '.'.join(value_num)
+                    val = float(value_num)
+                    result.append(dict(name=key, value=val))
+                
+                elif "Вес штуки" in key:
+                    value = value.split(" ")
+                    value_num = value[0].split(',')
+                    value_num = '.'.join(value_num)
+                    val = float(value_num)
+                    if value[1] == "г":
+                        val = val/1000
+                    result.append(dict(name=key, value=val))
+                
+                elif "Толщина" in key:
+                    value = value.split(" ")
+                    value_num = value[0].split(',')
+                    value_num = '.'.join(value_num)
+                    val = float(value_num)
+                    result.append(dict(name=key, value=val))
+                
+                elif "Страна производства" in key:
+                    if value == "КНР":
+                        value = "Китай"
+                    if value in countries:
+                       result.append(dict(name=key, value=value))
+                    else: 
+                        result.append(dict(name=key, value="Другое"))
+                    
     return result
 
 
@@ -108,7 +311,9 @@ def get_good(
         s: requests.Session,
         hr: str,
         good: bs4.element.Tag,
-        header: Dict[str, Any]
+        header: Dict[str, Any],
+        cl: str,
+        subcategory_name: str
 ) -> Dict[str, Any]:
     '''
         Returns dict defining good
@@ -119,14 +324,14 @@ def get_good(
             header: Dict[str, Any] - request header dict
         Returns Dict[str, Any]
     '''
-
+    class_name = cl.text.replace("\n","")
     header['path'] = hr.split(main_href)[-1]
     html = get_response(s, hr, header)
-    photo_href= html.find('img', {'class': 'ads-slider__image'})
+    photo_href = html.find('img', {'class': 'ads-slider__image'})
     if photo_href is None:
         photo_href=""
     else:
-        photo_href='https:' + photo_href.get('src')
+        photo_href = 'https:' + photo_href.get('src')
     
     article_text = html.find('span',{'class': 'article-number'})
     if article_text is None:
@@ -164,13 +369,16 @@ def get_good(
             description_text[0]=''
 
     return dict(
+        category=subcategory_name,
+        subcategory=class_name,
+        site_name="OBI",
+        url=hr,
         name=good.text.replace('  ', '').replace('\n', ''),
-        href=hr,
-        photo=photo_href,
-        article = article_number,
-        price = price_text,
+        img= photo_href,
         description = description_to_str(description_text),
-        properties=get_properties(html.find_all('tr'))
+        price = price_text,
+        article = article_number,
+        properties=get_properties(html.find_all('tr'), subcategory_name)
     )
 
 
@@ -193,7 +401,9 @@ def description_to_str(description: (list or str), joiner: str='\n'):
 
 def get_goods(
         s: requests.Session,
+        subcategory_name: str,
         html: bs4.element.Tag,
+        cl: str,
         header: Dict[str, Any],
         depth: List[Any] = [0]
 ) -> List[Dict[str, Any]]:
@@ -221,7 +431,7 @@ def get_goods(
             good = goods.find('p')
             if good is None or good.text.replace('  ', '').replace('\n', '') == '':
                 continue
-            result.append(get_good(s, goods.find('a').get('href'), good, header))
+            result.append(get_good(s, goods.find('a').get('href'), good, header, cl, subcategory_name))
             n += 1
 
         if p != 0 and len(html.find_all('a', {'class': 'pagination-bar__btn js-queryLink scrollup disabled'})) != 0:
@@ -238,6 +448,7 @@ def get_goods(
 
 def get_class(
         s: requests.Session,
+        subcategory_name: str,
         cl: bs4.element.Tag,
         header: Dict[str, Any],
         depth: List[Any] = [0]
@@ -251,22 +462,21 @@ def get_class(
             depth: List[Any] - depth object
         Returns Dict[str, Any]
     '''
-
+    result=[]
     header['path'] = cl.find('a').get('href')
     header[
         'accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
     html = get_response(s, main_href + header['path'], header)
-    return dict(
-        name=cl.text.replace('  ', '').replace('\n', ''),
-        href=main_href + header['path'],
-        goods=get_goods(s, html, header, depth)
-    )
+    goods=get_goods(s, subcategory_name, html, cl, header, depth)
+    result=result+goods
+    return result
 
 
 def get_classes(
         s: requests.Session,
         html: bs4.element.Tag,
         header: Dict[str, Any],
+        subcategory_name: str,
         depth: List[Any] = [0, 0]
 ) -> List[Dict[str, Any]]:
     '''
@@ -284,9 +494,17 @@ def get_classes(
     if depth[0] == 0:
         depth[0] = len(classes)
     for ind, cl in enumerate(classes):
-        if ind >= depth[0]:
-            break
-        result.append(get_class(s, cl, header, depth[1:]))
+        if subcategory_name == "Обои":
+            cl_name = cl_name_wp
+        if subcategory_name == "Плитка":
+            cl_name = cl_name_tile
+        if 'cl_name' in locals():
+            if cl.text.replace('  ', '').replace('\n', '') in cl_name:
+                result = result + get_class(s, subcategory_name, cl, header, depth[1:])
+        else:
+            if ind >= depth[0]:
+                break
+            result = result + get_class(s, subcategory_name, cl, header, depth[1:])
     return result
 
 
@@ -305,16 +523,14 @@ def get_subcategory(
             depth: List[Any] - depth object
         Returns Dict[str, Any]
     '''
-
+    result=[]
     num_href = subcategory.find('a').get('href').split('/')[-1]
     header['path'] = '/header-service/navigation/ru/ru/categories/' + num_href
     html = get_response(s, category_href + num_href, header)
-
-    return dict(
-        name=subcategory.text.replace('  ', '').replace('\n', ''),
-        href=category_href + num_href,
-        classes=get_classes(s, html, header, depth)
-    )
+    subcategory_name = subcategory.text.replace("\n","")
+    classes = get_classes(s, html, header, subcategory_name, depth)
+    result = result + classes
+    return result
 
 
 def get_subcategories(
@@ -343,11 +559,11 @@ def get_subcategories(
     for ind, subcategory in enumerate(subcategories):
         if isinstance(depth[0], dict):
             if subcategory.text.replace('  ', '').replace('\n', '') in depth[0][cat_name]:
-                result.append(get_subcategory(s, subcategory, header, depth[1:]))
+                result = result + get_subcategory(s, subcategory, header, depth[1:])
         elif isinstance(depth[0], int):
             if ind >= depth[0]:
                 break
-            result.append(get_subcategory(s, subcategory, header, depth[1:]))
+            result = result + get_subcategory(s, subcategory, header, depth[1:])
     return result
 
 
@@ -366,7 +582,7 @@ def get_category(
             depth: List[Any] - depth object
         Returns Dict[str, Any]
     '''
-
+    result=[]
     num_href = category.find('a').get('href').split('/')[-1]
     header['path'] = '/header-service/navigation/ru/ru/categories/' + num_href
     header['accept'] = '*/*'
@@ -374,12 +590,9 @@ def get_category(
     header['x-instana-s'] = '60c5a76ec670b450'
     header['x-instana-t'] = '60c5a76ec670b450'
     html = get_response(s, category_href + num_href, header)
-
-    return dict(
-        name=category.text.replace('  ', '').replace('\n', ''),
-        href=category_href + num_href,
-        subcategories=get_subcategories(s, html, header, category.text.replace('  ', '').replace('\n', ''), depth)
-    )
+    result = result + get_subcategories(s, html, header, category.text.replace('  ', '').replace('\n', ''), depth)
+    
+    return result
 
 
 def get_categories(
@@ -408,9 +621,11 @@ def get_categories(
             break
         if isinstance(depth[0], dict):
             if category.text.replace('  ', '').replace('\n', '') in depth[0]:
-                result.append(get_category(s, category, header, depth))
+                result = result + get_category(s, category, header, depth)
         elif isinstance(depth[0], int):
             if ind >= depth[0]:
                 break
-            result.append(get_category(s, category, header, depth[1:]))
+            result = result + get_category(s, category, header, depth[1:])
     return result
+    
+   
