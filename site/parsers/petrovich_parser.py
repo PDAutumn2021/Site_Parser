@@ -13,9 +13,8 @@ CAT_URL = 'https://moscow.petrovich.ru/catalog/1533/'
 result =[]
 s = requests.Session()
 '''
-Примеры заполнения аргументов
-    get_data(['Обои','Керамическая плитка и затирки'],['Мозаика','Фотообои']])
-    get_data() - поиск всех данных вне зависимости от категорий
+Пример заполнения аргументов
+get_data([['Обои', 'Керамическая плитка и затирки'],['Керамогранит', 'Керамическая плитка', 'Мозаика', 'Зеркальная плитка','Декоративные обои', 'Под покраску', 'Стеклообои', 'Фотообои']])
 '''
 def get_data(depth: List[Any] = [None, None, None]): #получаем значение и URL категорий, переходим на страницу выбранной категории
     d={'site-name':"Петрович"}
@@ -100,14 +99,14 @@ def parce_category(d, depth :List[Any], href: str):#получаем значе�
     categories = soup.find_all('a', class_='catalog-subsection')
     for category in categories:
         d_cat=add_name_and_url(category)
-        if (depth[1]==None) or ((d_cat['name']==depth[0])):# выбор субкатегории
+        if (depth[0]==None) or ((d_cat['name']==depth[0])):# выбор субкатегории
             d['category']=d_cat['name']
             parce_subcategory(d ,depth, d_cat['href'])
         else:
-            for dep in depth[1]:
+            for dep in depth[0]:
                 if (d_cat['name']==dep):# выбор субкатегории
-                   d['category']=d_sub['name']
-                   parce_subcategory(d ,depth, d_sub['href'])   
+                   d['category']=d_cat['name']
+                   parce_subcategory(d ,depth, d_cat['href'])   
     return (d)
 
 
@@ -142,12 +141,12 @@ def find_soup(href: str):
 
 def rename_items(d):
     if d['category']=='Керамическая плитка и затирки':
-        d['category']=['Керамическая плитка']
+        d['category']='Керамическая плитка'
     facture=False
-    arr_price=re.findall('\d+', d['price'])
-    d['price']=''
-    for price in arr_price:
-        d['price']=d['price']+price
+    d['price']=d['price'].replace(',','.')
+    d['price']=d['price'].strip(' Р')
+    d['price']=d['price'].replace(' ','')
+    d['price']=float(d['price'])
     for prop in d['properties']:
         if (prop['name']=='Тип товара'):
             if prop['value']=='Малярный флизелин':
@@ -214,7 +213,7 @@ def rename_items(d):
         if d['subcategory']=='Фотообои':
             d['subcategory']='Фотообои/Декоративные'
             d['properties'].append({'name':'Дизайн/Рисунок', 'value':'Фотопринт'})
-        if (d['category']=='Плитка'):
+        if (d['category']=='Керамическая плитка'):
             square=1
             if d['subcategory']=='Мозаика':
                 d['subcategory']='Плитка-мозаика'
@@ -230,7 +229,7 @@ def rename_items(d):
                         prop['value']='Темный'
                     else:
                         prop['value']='Комбинированный'
-                facture=false
+                facture=False
                 if (prop['name']=='Фактура'):
                     if (prop['value']!='Гладкая'):
                         facture=True
@@ -250,9 +249,6 @@ def rename_items(d):
                         prop['value']='Квадрат'
                     if (prop['value']=='Прямоугольная'):
                         prop['value']='Прямоугольник'
-                if (prop['name']=='Ширина, мм'):
-                    prop['name']=='Ширина'
-                    prop['value']=float(prop['value'])/10
                 if (prop['name']=='Применение'):
                     prop['name']=='Поверхность укладки'
                     if (prop['value']=='Напольная'):
@@ -273,23 +269,29 @@ def rename_items(d):
                         prop['value']='Авторский'
                    if (prop['value']=='Мозаика камень' or prop['value']=='Без рисунка' or prop['value']=='Без рисунка' or prop['value']=='Без рисунка'):
                         prop['value']='Мозаика'
-                   if (prop['name']=='Количество штук в упаковке, шт'):
-                        prop['name']='Кол-во в упаковке'   
-                        number=prop['value']
-                   if (prop['name']=='Длина, мм'):
-                        square=square*float(prop['value'])*0.001
-                        prop['name']='Длина'
-                        prop['value']=float(prop['value'])*0.1
-                   if (prop['name']=='Ширина, мм'):
-                        square=square*float(prop['value']*0.001)
-                        prop['name']='Ширина'
-                        prop['value']=float(prop['value'])*0.1
-                   if (prop['name']=='Вес, кг'):
-                        prop['name']='Вес штуки'
-                        prop['value']=float(prop['value'])/number
-                   if (prop['name']=='Толщина, мм'):
-                        prop['name']='Толщина'
+                if (prop['name']=='Количество штук в упаковке, шт'):
+                    prop['name']='Кол-во в упаковке'   
+                    number=int(prop['value'])
+                if (prop['name']=='Длина, мм'):
+                    square=square*float(prop['value'])*0.001
+                    prop['name']='Длина'
+                    prop['value']=round(float(prop['value'])*0.1,2)
+                if (prop['name']=='Ширина, мм'):
+                    square=round(square*float(prop['value'])*0.001,2)
+                    prop['name']='Ширина'
+                    prop['value']=round(float(prop['value'])*0.1,2)
+                if (prop['name']=='Вес, кг'):
+                    prop['name']='Вес штуки'
+                    prop['value']=prop['value'].replace(',','.')
+                    try:
+                        prop['value']=round(float(prop['value'])/number,2)
+                    except:
+                        pass
+                if (prop['name']=='Толщина, мм'):
+                    prop['name']='Толщина'
         if facture==True:
             d['properties'].append({'name':'Поверхность', 'value':'Рельефная'})
     result.append(d.copy())
-    return (result);
+    print(result)
+    return (d);
+print(get_data([['Обои', 'Керамическая плитка и затирки'],'Фотообои']))
