@@ -1,12 +1,12 @@
 # Натройка и запуск проекта
 
-1. Устанавливаете лоально проект `git clone https://github.com/PDAutumn2021/Site_Parser.git`
+1. Устанавливаете локально проект `git clone https://github.com/PDAutumn2021/Site_Parser.git`
 
-2. Создаете вертуальную среду для python (в проекте используется Python 3.9) в коре проекта `python -m venv venv`
+2. Создаете виртуальную среду для python (в проекте используется Python 3.9) в коре проекта `python -m venv venv`
 
 3. Активируете витруальную среду win:`source venv/Scripts/activate` linux:`source venv/bin/activate` (после успешной активации появиться `(venv)` в начале строки консоли)
 
-4. Скачиваете пакеты ` pip install -r requirements.txt`
+4. Скачиваете пакеты `pip install -r requirements.txt`
 
 5. Добавляете в проект файл `site/site_parser/protected.py` со следующм содержанием:
 ```python
@@ -31,3 +31,5 @@ DB = {
 7. Выполните миграции БД `python manage.py migrate`
 
 8. Можно запускать проект `python manage.py runserver`
+
+9. Если работете в PyCharm, то для того, чтобы он не ругался на импорты нужно отметить каталог `site_` как `Sources Root` (правый клик `Mark Directory as -> Sources Root`) 
