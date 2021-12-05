@@ -11,7 +11,7 @@ Loader
 {% block content %}
     <h1>Time: {{ time }}</h1>
 {% for site, errs in errors.items %}
-    <h1>{{ site }}</h1>
+    <h1>{{ site }} | {{ errs|length }}</h1>
     {% for err in errs %}
         <hr>
         <h2> Message: {{ err.message }}</h2>
