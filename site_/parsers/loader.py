@@ -9,19 +9,19 @@ def load():
 
     try:
         site = Site.objects.get(name='OBI')
-        # data = obi_parser([{'Стройка': ['Плитка'], 'Всё для дома': ['Обои']}, 0, 0])
-        with open('D:/PycharmProjects/Site_Parser/site_/parsers/obi.json', 'r') as f:
-            import json
-            data = json.loads(f.read())[300:310]
+        data = obi_parser([{'Стройка': ['Плитка'], 'Всё для дома': ['Обои']}, 0, 0])
+        # with open('D:/PycharmProjects/Site_Parser/site_/parsers/obi.json', 'r') as f:
+        #     import json
+        #     data = json.loads(f.read())[386:396]
 
         errors['OBI'] = save_data_from_parser(site, data)
     except Exception as e:
-        errors['OBI'] = {'message': 'error during handling parser', 'error': traceback.format_exc()}
+        errors['OBI'] = [{'message': 'error during handling parser', 'error': traceback.format_exc()}]
 
     return errors
 
 
-def save_data_from_parser(site: Site, data: dict):
+def save_data_from_parser(site: Site, data: dict) -> list:
     errors = []
 
     for item in data:
