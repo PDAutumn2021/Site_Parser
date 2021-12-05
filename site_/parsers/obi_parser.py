@@ -627,5 +627,3 @@ def get_categories(
                 break
             result = result + get_category(s, category, header, depth[1:])
     return result
-    
-   

@@ -1,6 +1,9 @@
 from django.views.generic import TemplateView
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+
+from parsers.loader import load
+
 
 class Test(TemplateView):
 
@@ -29,3 +32,8 @@ def avtorization(request):
 
 def registration(request):
     return render(request, 'www/registration.html')
+
+
+def loader(request):
+    result = load()
+    return JsonResponse(result, safe=False)

@@ -10,6 +10,7 @@ urlpatterns = [
     path('product', views.product, name='productPage'),
     path('search', views.search, name='searchPage'),
     path('avtorization', views.avtorization, name='avtorizationPage'),
-    path('registration', views.registration, name='registrationPage')
+    path('registration', views.registration, name='registrationPage'),
+    path('loader', views.loader, name='loader'),
 ]
 urlpatterns += staticfiles_urlpatterns()
