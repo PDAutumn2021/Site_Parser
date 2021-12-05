@@ -10,8 +10,8 @@
 
 {% block products %}
 
-{% include "www/productCard.html" with id="info_body_1" name="Товар 1" price="12 000" description="Описание" productLink="product" characteristics="характеристика 1<br>характеристика 2<br>характеристика 3<br>характеристика 4<br>" %}
-{% include "www/productCard.html" with id="info_body_2" name="Товар 2" price="110 000" description="Описание" productLink="product" characteristics="характеристика 1<br>характеристика 2<br>характеристика 3<br>характеристика 4<br>" %}
-{% include "www/productCard.html" with id="info_body_3" name="Товар 3" price="1 000" description="Описание" productLink="product" characteristics="характеристика 1<br>характеристика 2<br>характеристика 3<br>характеристика 4<br>" %}
+{% for product in products %}
+    {% include "www/productCard.html" with product=product total_count=total_count %}
+{% endfor %}
 
 {% endblock %}

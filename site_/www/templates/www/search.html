@@ -1,50 +1,23 @@
 {% extends 'www/base.html' %}
 
 {% block title %}
-Поиск "Вы сможете сюда вставить что ввел в поиск пользователь?"
+Поиск по категории {{ category_name }}
 {% endblock %}
 
 {% block topictext %}
-Нашлось "вставить количество" товаров
+Нашлось {{ total_count }} товаров
 
 {% load static %}
 
 <div class="dropdown">
 <button onclick="myFunction()" class="dropbtn"><img src="{% static 'images/filt.png' %}" alt="фильтр"></button>
   <div id="myDropdown" class="dropdown-content">
-    <p>Цена</p>
-    <input type="text" placeholder="от" class="myInput" name ="minPrice">
-    <input type="text" placeholder="до" class="myInput" name ="maxPrice">
-
-    <hr>
-    <p>Производитель</p>
-        <div class="filtDiv">
-            <input type="checkbox" id='manufacturer1' name="manufacturer1">
-            <label for="manufacturer1">Производитель 1</label>
-        </div>
-        <div class="filtDiv">
-            <input type="checkbox" id='manufacturer2' name="manufacturer2">
-            <label for="manufacturer2">Производитель 2</label>
-        </div>
-        <div class="filtDiv">
-            <input type="checkbox" id='manufacturer3' name="manufacturer3">
-            <label for="manufacturer3">Производитель 3</label>
-        </div>
-        <hr>
-        <p>Цвет</p>
-        <div class="filtDiv">
-            <input type="checkbox" id='color1' name="color1">
-            <label for="color1">Цвет 1</label>
-        </div>
-        <div class="filtDiv">
-            <input type="checkbox" id='color2' name="color2">
-            <label for="color2">Цвет 2</label>
-        </div>
-        <div class="filtDiv">
-            <input type="checkbox" id='color3' name="color3">
-            <label for="color3">Цвет 3</label>
-        </div>
-        <button type="submit" onclick="location.href='#';">Применить</button>
+    <form id='filter' name="filter">
+        {% include 'category_filters/'|add:category_name|add:'.html' %}
+        <input type="text" name="itemPerPage" value="20" hidden>
+        <input type="text" name="page" value="1" hidden>
+        <button type="submit">Применить</button>
+    </form>
   </div>
 </div>
 <script>
@@ -74,8 +47,8 @@ function filterFunction() {
 
 {% block products %}
 
-{% include "www/productCard.html" with image="main/images/default.png" id="info_body_1" name="Товар 1" price="12 000" description="Описание" productLink="product" characteristics="характеристика 1<br>характеристика 2<br>характеристика 3<br>характеристика 4<br>" %}
-{% include "www/productCard.html" with image="main/images/default.png" id="info_body_2" name="Товар 2" price="110 000" description="Описание" productLink="product" characteristics="характеристика 1<br>характеристика 2<br>характеристика 3<br>характеристика 4<br>" %}
-{% include "www/productCard.html" with image="main/images/default.png" id="info_body_3" name="Товар 3" price="1 000" description="Описание" productLink="product" characteristics="характеристика 1<br>характеристика 2<br>характеристика 3<br>характеристика 4<br>" %}
+{% for product in products %}
+    {% include "www/productCard.html" with product=product %}
+{% endfor %}
 
 {% endblock %}
