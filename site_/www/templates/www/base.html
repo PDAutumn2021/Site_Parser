@@ -55,38 +55,14 @@
                 </a>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
-                  <li class="nav-item">
-
-                    <!-- если категория активна - class="nav-link active", иначе class="nav-link link-dark" -->
-                    <a href="#" class="nav-link active" aria-current="page">
-                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#Cat1"></use></svg><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-                      Категория 1
-                    </font></font></a>
-                  </li>
-                  <li>
-                    <a href="#" class="nav-link link-dark">
-                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#Cat2"></use></svg><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-                      Категория 2
-                    </font></font></a>
-                  </li>
-                  <li>
-                    <a href="#" class="nav-link link-dark">
-                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#Cat3"></use></svg><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-                      Категория 3
-                    </font></font></a>
-                  </li>
-                  <li>
-                    <a href="#" class="nav-link link-dark">
-                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#Cat4"></use></svg><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-                      Категория 4
-                    </font></font></a>
-                  </li>
-                  <li>
-                    <a href="#" class="nav-link link-dark">
-                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#Cat5"></use></svg><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-                      Категория 5
-                    </font></font></a>
-                  </li>
+                    {% for category in categories %}
+                        <li>
+                            <a href="{% url 'category' category %}" class="nav-link {% if category == category_name %}active{% else %}link-dark{% endif %}">
+                              <svg class="bi me-2" width="16" height="16"><use xlink:href="#{{ category }}"></use></svg><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                                {{ category }}
+                            </font></font></a>
+                          </li>
+                    {% endfor %}
                 </ul>
               </div>
 

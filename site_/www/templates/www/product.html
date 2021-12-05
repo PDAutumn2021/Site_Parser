@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block topictext %}
-Название товара
+{{ object.name }}
 {% endblock %}
 
 {% load static %}
@@ -17,9 +17,7 @@
 				<div class="sim-slider">
 					 <ul class="sim-slider-list">
 						 <li><img src="{% static 'images/default.png' %}" alt="screen"></li>    <!-- это экран -->
-						 <li class="sim-slider-element"><img src="{% static 'images/default.png' %}" alt="1"></li>
-						 <li class="sim-slider-element"><img src="{% static 'images/default2.png' %}" alt="2"></li>
-						 <li class="sim-slider-element"><img src="{% static 'images/default3.png' %}" alt="N"></li>
+						 <li class="sim-slider-element"><img src="{{ object.img }}" alt="1"></li>
 					 </ul>
 					 <div class="sim-slider-arrow-left"></div>
 					 <div class="sim-slider-arrow-right"></div>
@@ -31,31 +29,52 @@
 
 			<div class="ratingPrice">
 				<div class="rating">
-					<a href="#"> <h3><img src='{% static "images/obi.png" %}' width="50" height="15"> Рейтинг товара 4,8 </h3> </a>
-					<a href="#"> <h3><img src='{% static "images/Leroy.png" %}' width="50" height="15"> Рейтинг товара 4,3 </h3> </a>
-					<a href="#"> <h3><img src='{% static "images/petrovic.png" %}' width="50" height="15"> Рейтинг товара 1,8</h3> </a>
-				</div>
+                    {% if object.site == 'OBI' %}
+					    <a href="{{ object.url }}">
+                            <h3>
+                                <img src='{% static "images/obi.png" %}' width="50" height="15">
+                                Перейти на страницу продавца
+                            </h3>
+                        </a>
+					{% elif object.site == 'OBI' %}
+                        <a href="{{ object.url }}">
+                            <h3>
+                                <img src='{% static "images/Leroy.png" %}' width="50" height="15">
+                                Перейти на страницу продавца
+                            </h3>
+                        </a>
+					{% elif object.site == 'OBI' %}
+                        <a href="{{ object.url }}">
+                            <h3>
+                                <img src='{% static "images/petrovic.png" %}' width="50" height="15">
+                                Перейти на страницу продавца
+                            </h3>
+                        </a>
+				    {% endif %}
+                </div>
 				<div class="prodPrice">
 					<img id="star" src="{% static 'images/star-after.png' %}" class="like">
-					<h1>от 120 000 р</h1>
+					<h1>{{ object.price }} ₽</h1>
 				</div>
 			</div>
-			<p>Описание: Очень классный товар, надо брать обязательно</p>
+			<p>{{ object.description }}</p>
 
-			<div class="charText">
-				<div class="charTextLeft">
-					<p>Характеристика 1:</p>
-					<p>Характеристика:</p>
-					<p>Характеристика:</p>
-					<p>Характеристика:</p>
-				</div>
-				<div class="charTextRight">
-					<p>Не указано</p>
-					<p>Не указано</p>
-					<p>Не указано</p>
-					<p>Не указано</p>
-				</div>
-			</div>
+			<table>
+                <thead>
+                    <tr>
+                        <th class="px-1">Свойство</th>
+                        <th class="px-1">Значение</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for property in object.properties %}
+                        <tr>
+                            <td class="px-1">{{ property.name }}</td>
+                            <td class="px-1">{{ property.value }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 		</div>
 	</div>
 	<div class="sameProduct">
@@ -63,30 +82,15 @@
 		 <div class="ant-carousel">
 		  <div class="ant-carousel-hider">
 			<ul class="ant-carousel-list">
-			  <li class="ant-carousel-element"><img src="{% static 'images/default.png' %}" alt="0">
-				<p>Товар 1</p>
-				  <p>12 000 р</p>
-			  </li>
-			  <li class="ant-carousel-element"><img src="{% static 'images/default2.png' %}" alt="1">
-				<p>Товар 2</p>
-				  <p>120 000 р</p>
-			  </li>
-			  <li class="ant-carousel-element"><img src="{% static 'images/default3.png' %}" alt="2">
-				<p>Товар 3</p>
-				  <p>1 000 р</p>
-			  </li>
-			  <li class="ant-carousel-element"><img src="{% static 'images/default.png' %}" alt="3">
-				<p>Товар 4</p>
-				  <p>150 р</p>
-			  </li>
-			  <li class="ant-carousel-element"><img src="{% static 'images/default2.png' %}" alt="4">
-				<p>Товар 5</p>
-				  <p>1 300 р</p>
-			  </li>
-			  <li class="ant-carousel-element"><img src="{% static 'images/default3.png' %}" alt="5">
-				<p>Товар 6</p>
-				  <p>55 000 р</p>
-			  </li>
+                {% for product in recommendations %}
+                  <li class="ant-carousel-element">
+                    <a href="{% url 'product' product.id %}" style="text-decoration: none; color: black">
+                      <img src="{{ product.img }}" alt="{{ product.num }}">
+                      <p>{{ product.name }}</p>
+                      <p>{{ product.price }} ₽</p>
+                    </a>
+                  </li>
+                {% endfor %}
 			</ul>
 		  </div>
 		  <div class="ant-carousel-arrow-left"></div>

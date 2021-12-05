@@ -35,7 +35,7 @@ class Product (models.Model):
 
     @property
     def price(self):
-        pass
+        return self.pricing_set.order_by('date').reverse()[0:1].first().price
 
     def __str__(self):
         return self.name
