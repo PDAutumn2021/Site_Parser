@@ -627,21 +627,3 @@ def get_categories(
                 break
             result = result + get_category(s, category, header, depth[1:])
     return result
-if __name__ == "__main__":
-    import json
-    import time
-    start = time.time()
-
-    # with open('obi.json', 'w') as f:
-    #     data = get_data([{'Стройка':['Плитка'], 'Всё для дома':['Обои']}, 0, 0])
-    #     f.write(json.dumps(data, ensure_ascii=True, indent=4))
-    #
-    # end = time.time()
-    # time = end - start
-    # print(time)
-    # print(int(time // 60 // 60 % 60), int(time // 60 % 60), int(time % 60))
-    # print()
-
-    with open('obi.json', 'r') as f:
-        data = json.loads(f.read())
-        print(data)
