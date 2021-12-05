@@ -1,3 +1,7 @@
+import datetime
+import json
+import time
+
 from django.views.generic import TemplateView, DetailView
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -110,6 +114,25 @@ class ProductDetailView (TemplateView, BaseContextMixin):
         return products_list
 
 
+class LoaderView (TemplateView, BaseContextMixin):
+
+    template_name = 'www/loader.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        start = time.time()
+
+        context['errors'] = load()
+
+        end = time.time()
+        t = end - start
+
+        context['time'] = f'{int(t // 60 // 60 % 60)} : {int(t // 60 % 60)} : {int(t % 60)}'
+
+        return context
+
+
 def about(request):
     return render(request, 'www/about.html')
 
@@ -124,8 +147,3 @@ def avtorization(request):
 
 def registration(request):
     return render(request, 'www/registration.html')
-
-
-def loader(request):
-    result = load()
-    return JsonResponse(result, safe=False)

@@ -1,0 +1,42 @@
+{% extends 'www/base.html' %}
+
+{% block title %}
+Loader
+{% endblock %}
+
+{% block topictext %}
+Loader
+{% endblock %}
+
+{% block content %}
+    <h1>Time: {{ time }}</h1>
+{% for site, errs in errors.items %}
+    <h1>{{ site }}</h1>
+    {% for err in errs %}
+        <hr>
+        <h2> Message: {{ err.message }}</h2>
+
+        {% if err.item %}
+            item: {{ err.item }}
+        {% endif %}
+
+        {% if err.product %}
+            product: {{ err.product }}
+        {% endif %}
+
+        {% if err.current_property %}
+            current_property: {{ err.current_property }}
+        {% endif %}
+
+        {% if err.item %}
+            item: {{ err.item }}
+        {% endif %}
+
+<pre>
+{{ err.error }}
+</pre>
+
+        <hr>
+    {% endfor %}
+{% endfor %}
+{% endblock %}

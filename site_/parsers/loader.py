@@ -1,3 +1,5 @@
+import traceback
+
 from api.models import Site, Product, Property, ProductsProperties, Pricing, Category
 from parsers.obi_parser import get_data as obi_parser
 
@@ -7,11 +9,14 @@ def load():
 
     try:
         site = Site.objects.get(name='OBI')
-        data = obi_parser([{'Стройка': ['Плитка'], 'Всё для дома': ['Обои']}, 0, 0])
+        # data = obi_parser([{'Стройка': ['Плитка'], 'Всё для дома': ['Обои']}, 0, 0])
+        with open('D:/PycharmProjects/Site_Parser/site_/parsers/obi.json', 'r') as f:
+            import json
+            data = json.loads(f.read())[300:310]
 
         errors['OBI'] = save_data_from_parser(site, data)
     except Exception as e:
-        errors['OBI'] = 'error during handling parser'
+        errors['OBI'] = {'message': 'error during handling parser', 'error': traceback.format_exc()}
 
     return errors
 
@@ -24,7 +29,8 @@ def save_data_from_parser(site: Site, data: dict):
         try:
             product, source = get_product(site, item)
         except Exception as e:
-            errors.append({'item': item, 'message': 'error in get_product', 'error': e})
+            errors.append({'item': item,
+                           'message': 'error in get_product', 'error': traceback.format_exc()})
             continue
 
         # перезаписываем измененные данные о товаре
@@ -38,14 +44,16 @@ def save_data_from_parser(site: Site, data: dict):
                 update_field(product, item, 'description')
             product.save()
         except Exception as e:
-            errors.append({'item': item, 'product': product, 'message': 'error during changing product', 'error': e})
+            errors.append({'item': item, 'product': product,
+                           'message': 'error during changing product', 'error': traceback.format_exc()})
             continue
 
         # заносим данные в историю цен
         try:
             Pricing.objects.create(product=product, price=item['price'])
         except Exception as e:
-            errors.append({'item': item, 'product': product, 'message': 'error during adding price', 'error': e})
+            errors.append({'item': item, 'product': product,
+                           'message': 'error during adding price', 'error': traceback.format_exc()})
             continue
 
         # перезаписываем свойства товара
@@ -57,10 +65,11 @@ def save_data_from_parser(site: Site, data: dict):
                 ProductsProperties.objects.create(product=product, property=property_obj, value=prop['value'])
         except Exception as e:
             errors.append({'item': item, 'product': product, 'current_property': prop,
-                           'message': 'error during adding property', 'error': e})
+                           'message': 'error during adding property', 'error': traceback.format_exc()})
             continue
 
     return errors
+
 
 def update_field(product: Product, item: dict, product_attr: str):
     """Обновляет поле товра если оно не совпадает с новым значением"""
@@ -68,7 +77,7 @@ def update_field(product: Product, item: dict, product_attr: str):
         setattr(product, product_attr, item[product_attr])
 
 
-def get_product(site:Site, item:dict) -> tuple[Product, str]:
+def get_product(site: Site, item: dict) -> tuple[Product, str]:
     """
     Возвращает объект товара из БД на основании словаря от парсера
     @param site: текущий объект сайт

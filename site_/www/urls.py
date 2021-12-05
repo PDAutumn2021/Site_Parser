@@ -1,6 +1,7 @@
 from django.urls import path
-from . import views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+from www import views
 
 name = 'www'
 
@@ -14,6 +15,6 @@ urlpatterns = [
     path('avtorization', views.avtorization, name='avtorizationPage'),
     path('registration', views.registration, name='registrationPage'),
 
-    path('loader', views.loader, name='loader'),
+    path('loader', views.LoaderView.as_view(), name='loader'),
 ]
 urlpatterns += staticfiles_urlpatterns()
