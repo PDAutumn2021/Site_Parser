@@ -1,4 +1,5 @@
 import re
+import json
 import bs4.element
 import requests
 import html5lib
@@ -159,6 +160,8 @@ def rename_items(d):
                     prop['value']=='Стеклоткань'
             if (prop['name']=='Длина, м'):
                 prop['name']='Длина рулона'
+            if (prop['name']=='Ширина, м'):
+                prop['name']='Ширина рулона'
             if prop['name']=='Покрытие':
                 prop['name']='Материал покрытия'
                 if (prop['value']=='Вспененный винил'or'Винил горячего тиснения'):
@@ -258,16 +261,16 @@ def rename_items(d):
                     else:
                         prop['value']='Другое'
                 if (prop['name']=='Стилистика'):
-                   prop['name']='Дизайн'
-                   if (prop['value']=='Без рисунка' or prop['value']=='Грес' or prop['value']=='Кабанчик моноколор' or prop['value']=='Моноколор'):
+                    prop['name']='Дизайн'
+                    if (prop['value']=='Без рисунка' or prop['value']=='Грес' or prop['value']=='Кабанчик моноколор' or prop['value']=='Моноколор'):
                         prop['value']='Однотонный'
-                   if (prop['value']=='Бетон' or prop['value']=='Дерево' or prop['value']=='Камень' or prop['value']=='Кирпич' or prop['value']=='Металл' or prop['value']=='Мрамор' or prop['value']=='Мрамор строительный'):
+                    if (prop['value']=='Бетон' or prop['value']=='Дерево' or prop['value']=='Камень' or prop['value']=='Кирпич' or prop['value']=='Металл' or prop['value']=='Мрамор' or prop['value']=='Мрамор строительный'):
                         prop['value']='Имитация материала'
-                   if (prop['value']=='Геометрия' or prop['value']=='Кабанчик класика' or prop['value']=='Плитка белая'):
+                    if (prop['value']=='Геометрия' or prop['value']=='Кабанчик класика' or prop['value']=='Плитка белая'):
                         prop['value']='Орнамент'
-                   if (prop['value']=='Арт-деко' or prop['value']=='Винтаж' or prop['value']=='Классика' or prop['value']=='Клинкер' or prop['value']=='Минимализм' or prop['value']=='Модерн' or prop['value']=='Минимализм' or prop['value']=='Прованс' or prop['value']=='Пэчворк'):
+                    if (prop['value']=='Арт-деко' or prop['value']=='Винтаж' or prop['value']=='Классика' or prop['value']=='Клинкер' or prop['value']=='Минимализм' or prop['value']=='Модерн' or prop['value']=='Минимализм' or prop['value']=='Прованс' or prop['value']=='Пэчворк'):
                         prop['value']='Авторский'
-                   if (prop['value']=='Мозаика камень' or prop['value']=='Без рисунка' or prop['value']=='Без рисунка' or prop['value']=='Без рисунка'):
+                    if (prop['value']=='Мозаика камень' or prop['value']=='Без рисунка' or prop['value']=='Без рисунка' or prop['value']=='Без рисунка'):
                         prop['value']='Мозаика'
                 if (prop['name']=='Количество штук в упаковке, шт'):
                     prop['name']='Кол-во в упаковке'   
@@ -291,7 +294,10 @@ def rename_items(d):
                     prop['name']='Толщина'
         if facture==True:
             d['properties'].append({'name':'Поверхность', 'value':'Рельефная'})
+        remove_item=False
+    d['properties']=[prop for prop in d['properties'] if ((prop['name']=='Материал основы')or(prop['name']=='Длина рулона')or(prop['name']=='Материал покрытия')or(prop['name']=='Помещение')or(prop['name']=='Ширина рулона')or(prop['name']=='Дизайн/Рисунок')or(prop['name']=='Фактура')or(prop['name']=='Стыковка полотен')or(prop['name']=='Вес упаковки')or(prop['name']=='Страна производства')or(prop['name']=='Оттенок')or(prop['name']=='Поверхность')or(prop['name']=='Материал')or(prop['name']=='Форма')or(prop['name']=='Ширина')or(prop['name']=='Поверхность укладки')or(prop['name']=='Количество в упаковке')or(prop['name']=='Площадь элемента')or(prop['name']=='Длина')or(prop['name']=='Вес штуки')or(prop['name']=='Толщина'))]
     result.append(d.copy())
-    print(result)
     return (d);
-print(get_data([['Обои', 'Керамическая плитка и затирки'],'Фотообои']))
+data=get_data([['Обои', 'Керамическая плитка и затирки'],['Керамогранит', 'Керамическая плитка', 'Мозаика', 'Зеркальная плитка','Декоративные обои', 'Под покраску', 'Стеклообои', 'Фотообои']])
+with open("data_file.json", "w") as write_file:
+    json.dump(data, write_file)
