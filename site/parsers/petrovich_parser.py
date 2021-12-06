@@ -298,6 +298,3 @@ def rename_items(d):
     d['properties']=[prop for prop in d['properties'] if ((prop['name']=='Материал основы')or(prop['name']=='Длина рулона')or(prop['name']=='Материал покрытия')or(prop['name']=='Помещение')or(prop['name']=='Ширина рулона')or(prop['name']=='Дизайн/Рисунок')or(prop['name']=='Фактура')or(prop['name']=='Стыковка полотен')or(prop['name']=='Вес упаковки')or(prop['name']=='Страна производства')or(prop['name']=='Оттенок')or(prop['name']=='Поверхность')or(prop['name']=='Материал')or(prop['name']=='Форма')or(prop['name']=='Ширина')or(prop['name']=='Поверхность укладки')or(prop['name']=='Количество в упаковке')or(prop['name']=='Площадь элемента')or(prop['name']=='Длина')or(prop['name']=='Вес штуки')or(prop['name']=='Толщина'))]
     result.append(d.copy())
     return (d);
-data=get_data([['Обои', 'Керамическая плитка и затирки'],['Керамогранит', 'Керамическая плитка', 'Мозаика', 'Зеркальная плитка','Декоративные обои', 'Под покраску', 'Стеклообои', 'Фотообои']])
-with open("data_file.json", "w") as write_file:
-    json.dump(data, write_file)
