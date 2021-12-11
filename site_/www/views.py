@@ -2,6 +2,7 @@ import datetime
 import json
 import time
 
+from django.db.models import Max
 from django.views.generic import TemplateView, DetailView
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -92,11 +93,38 @@ class CategoryListView (TemplateView, BaseContextMixin):
         context = super().get_context_data(**kwargs)
 
         context['products'] = self.get_products(kwargs['category_name'])
-        context['total_count'] = Product.objects.filter(category__eng_name=kwargs['category_name']).count()
+        context['total_count'] = len(context['products'])
         return context
 
-    def get_products(self, category_name):
+    def get_product_dict(self, product_obj):
+        product_dict = {}
+        product_dict['id'] = product_obj.product.id
+        product_dict['name'] = product_obj.product.name
+        product_dict['price'] = product_obj.product.price
+
+        product_dict['img'] = product_obj.product.img
+        product_dict['description'] = product_obj.product.description
+        product_dict['properties'] = (dict(zip(('name', 'value'), item)) for item in
+                                      product_obj.product.productsproperties_set.values_list('property__name',
+                                                                                             'value'))
+        return product_dict
+
+    def get_product_list(self, filtered_products):
         products_list = []
+        if 'page' not in self.request.GET or 'itemPerPage' not in self.request.GET:
+            beg = 0
+            end = 20
+        else:
+            beg = int(self.request.GET['itemPerPage']) * (int(self.request.GET['page']) - 1)
+            end = int(self.request.GET['itemPerPage']) * int(self.request.GET['page'])
+
+        if beg > len(filtered_products):
+            return []
+        for product_obj in filtered_products[beg:end]:
+            products_list.append(self.get_product_dict(product_obj))
+        return products_list
+
+    def get_products(self, category_name):
         filtered_products = ProductsProperties.objects.filter(product__category__eng_name=category_name)
         types = []
 
@@ -105,30 +133,31 @@ class CategoryListView (TemplateView, BaseContextMixin):
                 continue
             if 'type' in key:
                 types.append(value)
-            elif 'Price' in key:
-                pass
+            elif 'minPrice' == key:
+                prices = [i['product'] for i in Pricing.objects.values('product')
+                                             .filter(price__gte=float(value))
+                                             .annotate(total=Max('date'))]
+                filtered_products = filtered_products.filter(product__in=prices)
+            elif 'maxPrice' == key:
+                prices = [i['product'] for i in Pricing.objects.values('product')
+                                             .filter(price__lte=float(value))
+                                             .annotate(total=Max('date'))]
+                filtered_products = filtered_products.filter(product__in=prices)
+            elif 'min' in key:
+                filtered_products = filtered_products.filter(value__gte=float(value),
+                                                             property__name=self.translate[category_name][key])
+            elif 'max' in key:
+                filtered_products = filtered_products.filter(value__lte=float(value),
+                                                             property__name=self.translate[category_name][key])
             elif 'page' in key.lower():
-                pass
+                continue
             else:
-                filtered_products = filtered_products.filter(value=value, property__name=self.translate[category_name][key])
-
+                filtered_products = filtered_products.filter(value=value,
+                                                             property__name=self.translate[category_name][key])
         if len(types) > 0:
             filtered_products = filtered_products.filter(product__subcategory__in=types)
 
-        for i, product_obj in enumerate(filtered_products[:20]):
-            product_dict = {}
-            product_dict['id'] = product_obj.product.id
-            product_dict['name'] = product_obj.product.name
-            temp_price = Pricing.objects.filter(id=product_dict['id']).order_by('-date')
-            if len(temp_price) > 0:
-                product_dict['price'] = temp_price[0].price
-            else:
-                product_dict['price'] = ''
-            product_dict['img'] = product_obj.product.img
-            product_dict['description'] = product_obj.product.description
-            product_dict['properties'] = ( dict(zip(('name', 'value'), item)) for item in product_obj.product.productsproperties_set.values_list('property__name', 'value') ) # список вида [{'name': 'Страна', 'value': 'Китай'}, {'name': 'Цвет', 'value': None}...], который содрежит все возможные для данной категории свойства
-            products_list.append(product_dict)
-        return products_list
+        return self.get_product_list(filtered_products)
 
 
 class ProductDetailView (TemplateView, BaseContextMixin):
