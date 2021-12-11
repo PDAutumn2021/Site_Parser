@@ -2,13 +2,18 @@
     <div class="product-img">
         {% load static %}
         <img src='{{ product.img }}' width="100%" height="100%">
+        <img src="{% static 'images/star-white.png' %}" class="like">
     </div>
 
     <div class="product-text">
         <div class="productName">
-            <h2>{{ product.name }}</h2>
-            <img src="{% static 'images/star-white.png' %}" class="like">
-            <p class="price">{{ product.price }} ₽</p> </div>
+            <div class="name">
+                <h2>{{ product.name }}</h2>
+            </div>
+            <div class="priceDiv">
+                <p class="price">{{ product.price }} ₽</p>
+            </div>
+        </div>
         <p>{{ product.description|truncatewords:22 }}</p>
         <div class="info">
           <input id="{{ product.id }}" class="info__switch" type="checkbox">
