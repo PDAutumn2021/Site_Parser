@@ -49,7 +49,11 @@ function filterFunction() {
 <button class="accordion">Расширенные настройки</button>
 <div class="panel">
     <form id='allFilter' name="bigFilter">
+        {% if category_name == "tiles" %}
+        {% include 'category_filters/TileAllSetings.html' %}
+        {% else %}
         {% include 'category_filters/WallAllSetings.html' %}
+        {% endif %}
         <input type="text" name="itemPerPage" value="20" hidden>
         <input type="text" name="page" value="1" hidden>
         <button type="submit">Применить</button>

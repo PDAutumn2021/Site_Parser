@@ -9,6 +9,8 @@ from django.views.generic.base import ContextMixin
 
 from parsers.loader import load
 from api.models import Category, Product
+from api.models import ProductsProperties
+from api.models import Pricing
 
 
 class BaseContextMixin(ContextMixin):
@@ -48,31 +50,84 @@ class HomeView (TemplateView, BaseContextMixin):
 class CategoryListView (TemplateView, BaseContextMixin):
 
     template_name = 'www/search.html'
+    translate = {
+        'tiles': {
+            'Shade': 'Оттенок',
+            'Form': 'Форма',
+            'TypeRoom': 'Тип помещений',
+            'minWidth': 'Ширина',
+            'minThickness': 'Толщина',
+            'maxWidth': 'Ширина',
+            'TypeWork': 'Вид работ',
+            'minSquare': 'Площадь элемента',
+            'Material': 'Материал',
+            'minLength': 'Длина',
+            'maxLength': 'Длина',
+            'Room': 'Помещение',
+            'Design': 'Дизайн',
+            'Surface': 'Поверхность',
+            'Country': 'Страна производства',
+            'maxSquare': 'Площадь элемента',
+            'LayingSurface': 'Поверхность укладки',
+            'maxThickness': 'Толщина'
+        },
+        'wallpapers': {
+            'BaseMaterial': 'Материал основы',
+            'TextureWall': 'Фактура',
+            'maxLengthWall': 'Длина рулона',
+            'CountryWall': 'Страна производства',
+            'DockinCanvases': 'Стыковка полотен',
+            'CoverMaterial': 'Материал покрытия',
+            'minLengthWall': 'Длина рулона',
+            'RoomWall': 'Помещение',
+            'minWeight': 'Вес штуки',
+            'maxWeight': 'Вес штуки',
+            'maxWidthWall': 'Ширина рулона',
+            'minWidthWall': 'Ширина рулона',
+            'DesignWall': 'Дизайн / Рисунок'
+        }
+    }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # self.request.GET - тут лежат передаваемые get-параметры
-        # kwargs['category_name'] - тут лежит название текущей категории
-
-        context['products'] = self.get_products()
+        context['products'] = self.get_products(kwargs['category_name'])
         context['total_count'] = Product.objects.filter(category__eng_name=kwargs['category_name']).count()
         return context
 
-    def get_products(self):
+    def get_products(self, category_name):
         products_list = []
-        products_objs = Product.objects.filter()[:20]
+        filtered_products = ProductsProperties.objects.filter(product__category__eng_name=category_name)
+        types = []
 
-        for i, product_obj in enumerate(products_objs):
+        for key, value in self.request.GET.items():
+            if value == '':
+                continue
+            if 'type' in key:
+                types.append(value)
+            elif 'Price' in key:
+                pass
+            elif 'page' in key.lower():
+                pass
+            else:
+                filtered_products = filtered_products.filter(value=value, property__name=self.translate[category_name][key])
+
+        if len(types) > 0:
+            filtered_products = filtered_products.filter(product__subcategory__in=types)
+
+        for i, product_obj in enumerate(filtered_products[:20]):
             product_dict = {}
-            product_dict['id'] = product_obj.id
-            product_dict['name'] = product_obj.name
-            product_dict['price'] = product_obj.price
-            product_dict['img'] = product_obj.img
-            product_dict['description'] = product_obj.description
-            product_dict['properties'] = ( dict(zip(('name', 'value'), item)) for item in product_obj.productsproperties_set.values_list('property__name', 'value') ) # список вида [{'name': 'Страна', 'value': 'Китай'}, {'name': 'Цвет', 'value': None}...], который содрежит все возможные для данной категории свойства
+            product_dict['id'] = product_obj.product.id
+            product_dict['name'] = product_obj.product.name
+            temp_price = Pricing.objects.filter(id=product_dict['id']).order_by('-date')
+            if len(temp_price) > 0:
+                product_dict['price'] = temp_price[0].price
+            else:
+                product_dict['price'] = ''
+            product_dict['img'] = product_obj.product.img
+            product_dict['description'] = product_obj.product.description
+            product_dict['properties'] = ( dict(zip(('name', 'value'), item)) for item in product_obj.product.productsproperties_set.values_list('property__name', 'value') ) # список вида [{'name': 'Страна', 'value': 'Китай'}, {'name': 'Цвет', 'value': None}...], который содрежит все возможные для данной категории свойства
             products_list.append(product_dict)
-
         return products_list
 
 
