@@ -2,7 +2,7 @@
 
 1. Устанавливаете локально проект `git clone https://github.com/PDAutumn2021/Site_Parser.git`
 
-2. Создаете виртуальную среду для python (в проекте используется Python 3.9) в коре проекта `python -m venv venv`
+2. Создаете виртуальную среду для python (в проекте используется Python 3.9) в корне проекта `python -m venv venv`
 
 3. Активируете витруальную среду win:`source venv/Scripts/activate` linux:`source venv/bin/activate` (после успешной активации появиться `(venv)` в начале строки консоли)
 
