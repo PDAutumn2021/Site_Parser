@@ -51,13 +51,20 @@
 .product-text h4{
 	font-size: 15px;
 	text-align: right;
+	margin-right:12%;
 }
 .product-text p{
 	text-align: left;
 }
+.name{
+    width:75%;
+}
+.priceDiv{
+    width:25%;
+}
 .price{
     color: red;
-    margin-left: 90%;
+    margin-left: 10%;
     font-size: 30px;
 }
 .product-text a{
@@ -176,8 +183,11 @@
 .rating a{
     text-decoration: none;
 }
+.rating{
+    width:50%;
+}
 .prodPrice{
-    width:70%;
+    width:50%;
     text-align: right;
     margin: auto;
 }
@@ -486,8 +496,8 @@ span.ant-dot {
     margin: 5px;
 }
 .like{
-    margin-top: 7px;
-	margin-left: -155px;
+    margin-top: -140%;
+    margin-right: -80%;
 	width:30px;
 	height:30px;
 	cursor: pointer;
@@ -530,7 +540,7 @@ span.ant-dot {
     display: none;
     position: absolute;
     background-color: #f8f9fa;
-    min-width: 230px;
+    min-width: 300px;
     overflow: auto;
     border: 1px solid #ddd;
     z-index: 1;
@@ -568,3 +578,59 @@ span.ant-dot {
 }
 .dropdown a:hover {background-color: #ddd;}
 .show {display: block;}
+
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+  background-color: #f8f9fa;
+  cursor: pointer;
+  width: 98%;
+  text-align: center;
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+  outline: none;
+  margin: 10px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .accordion:hover {
+  background-color: #ebebeb;
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  display: none;
+  overflow: hidden;
+}
+
+.allFilters{
+display: flex;
+width: 100%;
+}
+.comboBoxDiv{
+width: 50%;
+}
+.textDiv{
+width: 50%;
+}
+.comboBoxDiv select{
+width: 70%;
+padding:5px;
+border-radius:5px;
+}
+.allFilters p{
+margin-top: 15px;
+margin-bottom: 5px;
+}
+.panel button{
+    margin: auto;
+    margin-bottom: 5px;
+    margin-top: -10px;
+    font-size: 18px;
+    border-radius: 10px;
+    border-color:#0d6efd;
+    background-color: #0d6efd;
+    color:white;
+}
