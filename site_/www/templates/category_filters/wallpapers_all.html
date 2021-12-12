@@ -1,6 +1,19 @@
 <hr>
 <div class="allFilters">
     <div class="comboBoxDiv">
+
+        <p>Вид обоев</p>
+        <div class="custom-select">
+          <select name="type">
+            <option value="">Не выбрано:</option>
+            <option value="Флизелиновые обои">Флизелиновые обои</option>
+            <option value="Виниловые обои">Виниловые обои</option>
+            <option value="Бумажные обои">Бумажные обои</option>
+            <option value="Фотообои">Фотообои</option>
+            <option value="Стеклообои">Стеклообои</option>
+            <option value="Обои под покраску">Обои под покраску</option>
+          </select>
+        </div>
         <p>Материал основы</p>
         <div class="custom-select" name="Wallpaper">
           <select name="BaseMaterial">
@@ -89,6 +102,9 @@
     </div>
 
     <div class="textDiv">
+        <p>Цена</p>
+            <input type="text" placeholder="от" class="myInput" name ="minPrice">
+            <input type="text" placeholder="до" class="myInput" name ="maxPrice">
         <p>Ширина рулона</p>
             <input type="text" placeholder="от" class="myInput" name ="minWidthWall">
             <input type="text" placeholder="до" class="myInput" name ="maxWidthWall">

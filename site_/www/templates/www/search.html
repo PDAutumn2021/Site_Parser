@@ -8,7 +8,7 @@
 Нашлось {{ total_count }} товаров
 
 {% load static %}
-
+<!--
 <div class="dropdown">
 <button onclick="myFunction()" class="dropbtn"><img src="{% static 'images/filt.png' %}" alt="фильтр"></button>
   <div id="myDropdown" class="dropdown-content">
@@ -42,11 +42,11 @@ function filterFunction() {
     }
 }
 </script>
-
+-->
 {% endblock %}
 
 {% block content %}
-<button class="accordion">Расширенные настройки</button>
+<button class="accordion">Настройки фильтра</button>
 <div class="panel">
     <form id='allFilter' name="bigFilter">
         {% include 'category_filters/'|add:category_name|add:'_all.html' %}
