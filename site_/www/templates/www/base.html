@@ -57,9 +57,9 @@
                 <ul class="nav nav-pills flex-column mb-auto">
                     {% for category in categories %}
                         <li>
-                            <a href="{% url 'category' category %}" class="nav-link {% if category == category_name %}active{% else %}link-dark{% endif %}">
-                              <svg class="bi me-2" width="16" height="16"><use xlink:href="#{{ category }}"></use></svg><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-                                {{ category }}
+                            <a href="{% url 'category' category.eng_name %}" class="nav-link {% if category.eng_name == category_name %}active{% else %}link-dark{% endif %}">
+                              <svg class="bi me-2" width="16" height="16"><use xlink:href="#{{ category.name }}"></use></svg><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                                {{ category.name }}
                             </font></font></a>
                           </li>
                     {% endfor %}

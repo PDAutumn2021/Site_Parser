@@ -15,7 +15,7 @@ class BaseContextMixin(ContextMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all().values_list('name', flat=True)
+        context['categories'] = Category.objects.all().values('name', 'eng_name')
         return context
 
 
@@ -56,7 +56,7 @@ class CategoryListView (TemplateView, BaseContextMixin):
         # kwargs['category_name'] - тут лежит название текущей категории
 
         context['products'] = self.get_products()
-        context['total_count'] = Product.objects.filter(category__name=kwargs['category_name']).count()
+        context['total_count'] = Product.objects.filter(category__eng_name=kwargs['category_name']).count()
         return context
 
     def get_products(self):
@@ -94,7 +94,7 @@ class ProductDetailView (TemplateView, BaseContextMixin):
                                                  )
                                   })
 
-        context['category_name'] = obj.first().category.name
+        context['category_name'] = obj.first().category.eng_name
         context['recommendations'] = self.get_recommendations()
         return context
 
