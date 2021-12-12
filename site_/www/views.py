@@ -92,20 +92,21 @@ class CategoryListView (TemplateView, BaseContextMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['products'] = self.get_products(kwargs['category_name'])
-        context['total_count'] = len(context['products'])
+        filtered_products = self.get_products(kwargs['category_name'])
+        context['products'] = self.get_product_list(filtered_products)
+        context['total_count'] = len(filtered_products)
         return context
 
     def get_product_dict(self, product_obj):
         product_dict = {}
-        product_dict['id'] = product_obj.product.id
-        product_dict['name'] = product_obj.product.name
-        product_dict['price'] = product_obj.product.price
+        product_dict['id'] = product_obj.id
+        product_dict['name'] = product_obj.name
+        product_dict['price'] = product_obj.price
 
-        product_dict['img'] = product_obj.product.img
-        product_dict['description'] = product_obj.product.description
+        product_dict['img'] = product_obj.img
+        product_dict['description'] = product_obj.description
         product_dict['properties'] = (dict(zip(('name', 'value'), item)) for item in
-                                      product_obj.product.productsproperties_set.values_list('property__name',
+                                      product_obj.productsproperties_set.values_list('property__name',
                                                                                              'value'))
         return product_dict
 
@@ -120,7 +121,8 @@ class CategoryListView (TemplateView, BaseContextMixin):
 
         if beg > len(filtered_products):
             return []
-        for product_obj in filtered_products[beg:end]:
+        filtered_products = Product.objects.filter(id__in=filtered_products[beg:end])
+        for product_obj in filtered_products:
             products_list.append(self.get_product_dict(product_obj))
         return products_list
 
@@ -157,7 +159,9 @@ class CategoryListView (TemplateView, BaseContextMixin):
         if len(types) > 0:
             filtered_products = filtered_products.filter(product__subcategory__in=types)
 
-        return self.get_product_list(filtered_products)
+        filtered_products = filtered_products.values_list('product', flat=True).distinct()
+
+        return filtered_products
 
 
 class ProductDetailView (TemplateView, BaseContextMixin):
