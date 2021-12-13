@@ -5,4 +5,4 @@
 /site_parser.log
 /site_/uwsgi.ini
 /site_/static/**
-site/site_parser/protected.py
+**/protected.py

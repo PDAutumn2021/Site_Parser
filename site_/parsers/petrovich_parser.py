@@ -148,7 +148,7 @@ def find_soup(href: str):
 
 def rename_items(d):
     if d['category'] == 'Керамическая плитка и затирки':
-        d['category'] = 'Керамическая плитка'
+        d['category'] = 'Плитка'
     facture = False
     d['price'] = d['price'].replace(',', '.')
     d['price'] = d['price'].strip(' Р')
