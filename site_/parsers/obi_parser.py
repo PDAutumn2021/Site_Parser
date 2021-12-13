@@ -325,6 +325,8 @@ def get_good(
         Returns Dict[str, Any]
     '''
     class_name = cl.text.replace("\n","")
+    if class_name=="Фотообои" or class_name=="Декоративные обои":
+        class_name="Фотообои/Декоративные"
     header['path'] = hr.split(main_href)[-1]
     html = get_response(s, hr, header)
     photo_href = html.find('img', {'class': 'ads-slider__image'})
