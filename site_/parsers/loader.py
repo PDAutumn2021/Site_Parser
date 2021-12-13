@@ -2,6 +2,7 @@ import traceback
 
 from api.models import Site, Product, Property, ProductsProperties, Pricing, Category
 from parsers.obi_parser import get_data as obi_parser
+from parsers.petrovich_parser import get_data as petr_parser
 
 
 def load():
@@ -12,11 +13,22 @@ def load():
         data = obi_parser([{'Стройка': ['Плитка'], 'Всё для дома': ['Обои']}, 0, 0])
         # with open('D:/PycharmProjects/Site_Parser/site_/parsers/obi.json', 'r') as f:
         #     import json
-        #     data = json.loads(f.read())[386:396]
+        #     data = json.loads(f.read())[:]
 
         errors['OBI'] = save_data_from_parser(site, data)
     except Exception as e:
         errors['OBI'] = [{'message': 'error during handling parser', 'error': traceback.format_exc()}]
+
+    try:
+        site = Site.objects.get(name='Петрович')
+        data = data = petr_parser([['Обои', 'Керамическая плитка и затирки'], ['Керамогранит', 'Керамическая плитка', 'Мозаика', 'Зеркальная плитка','Декоративные обои', 'Под покраску', 'Стеклообои', 'Фотообои']])
+        # with open('D:/PycharmProjects/Site_Parser/site_/parsers/petrovich.json', 'r') as f:
+        #     import json
+        #     data = json.loads(f.read())[:]
+
+        errors['Петрович'] = save_data_from_parser(site, data)
+    except Exception as e:
+        errors['Петрович'] = [{'message': 'error during handling parser', 'error': traceback.format_exc()}]
 
     return errors
 
@@ -62,7 +74,11 @@ def save_data_from_parser(site: Site, data: dict) -> list:
             ProductsProperties.objects.filter(product=product).delete()
             for prop in item['properties']:
                 property_obj, _ = Property.objects.get_or_create(name=prop['name'])
-                ProductsProperties.objects.create(product=product, property=property_obj, value=prop['value'])
+                if isinstance(prop['value'], list):
+                    for value in prop['value']:
+                        ProductsProperties.objects.create(product=product, property=property_obj, value=value)
+                else:
+                    ProductsProperties.objects.create(product=product, property=property_obj, value=prop['value'])
         except Exception as e:
             errors.append({'item': item, 'product': product, 'current_property': prop,
                            'message': 'error during adding property', 'error': traceback.format_exc()})
