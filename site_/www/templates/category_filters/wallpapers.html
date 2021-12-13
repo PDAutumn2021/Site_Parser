@@ -1,31 +1,120 @@
-<p>Цена</p>
-<input type="text" placeholder="от" class="myInput" name ="minPrice">
-<input type="text" placeholder="до" class="myInput" name ="maxPrice">
+<hr>
+<div class="allFilters">
+    <div class="comboBoxDiv">
 
+        <p>Вид обоев</p>
+        <div class="custom-select">
+          <select name="type">
+            <option value="">Не выбрано:</option>
+            <option value="Флизелиновые обои">Флизелиновые обои</option>
+            <option value="Виниловые обои">Виниловые обои</option>
+            <option value="Бумажные обои">Бумажные обои</option>
+            <option value="Фотообои">Фотообои</option>
+            <option value="Стеклообои">Стеклообои</option>
+            <option value="Обои под покраску">Обои под покраску</option>
+          </select>
+        </div>
+        <p>Материал основы</p>
+        <div class="custom-select" name="Wallpaper">
+          <select name="BaseMaterial">
+            <option value="">Не выбрано:</option>
+            <option value="Флизелин">Флизелин</option>
+            <option value="Винил">Винил</option>
+            <option value="Стеклоткань">Стеклоткань</option>
+          </select>
+        </div>
+
+        <p>Материал покрытия</p>
+        <div class="custom-select">
+          <select name="CoverMaterial">
+            <option value="">Не выбрано:</option>
+            <option value="Винил">Винил</option>
+            <option value="Бумага">Бумага</option>
+            <option value="Флизелин">Флизелин</option>
+            <option value="Стеклоткань">Стеклоткань</option>
+          </select>
+        </div>
+
+        <p>Помещение</p>
+        <div class="custom-select">
+          <select name="RoomWall">
+            <option value="">Не выбрано:</option>
+            <option value="Производственное помещение">Производственное помещение</option>
+            <option value="Жилая комната">Жилая комната</option>
+            <option value="Кухня">Кухня</option>
+            <option value="Детская">Детская</option>
+          </select>
+        </div>
+
+        <p>Дизайн / Рисунок</p>
+        <div class="custom-select">
+          <select name="DesignWall">
+            <option value="">Не выбрано:</option>
+            <option value="Узор">Узор</option>
+            <option value="Однотонный">Однотонный</option>
+            <option value="Полосы">Полосы</option>
+            <option value="Фотопринт">Фотопринт</option>
+            <option value="Имитация материала">Имитация материала</option>
+            <option value="Надписи">Надписи</option>
+            <option value="Рисунок">Рисунок</option>
+            <option value="Другое">Другое</option>
+          </select>
+        </div>
+
+        <p>Фактура</p>
+        <div class="custom-select">
+          <select name="TextureWall">
+            <option value="">Не выбрано:</option>
+            <option value="Гладкая">Гладкая</option>
+            <option value="Рельефная">Рельефная</option>
+          </select>
+        </div>
+
+        <p>Стыковка полотен</p>
+        <div class="custom-select">
+          <select name="DockinCanvases">
+            <option value="">Не выбрано:</option>
+            <option value="С подбором рисунка">С подбором рисунка</option>
+            <option value="Без подбора рисунка">Без подбора рисунка</option>
+          </select>
+        </div>
+
+        <p>Страна производства</p>
+        <div class="custom-select">
+          <select name="CountryWall">
+            <option value="">Не выбрано:</option>
+            <option value="Россия">Россия</option>
+            <option value="Белоруссия">Белоруссия</option>
+            <option value="Украина">Украина</option>
+            <option value="Китай">Китай</option>
+            <option value="Турция">Турция</option>
+            <option value="Испания">Испания</option>
+            <option value="Индия">Индия</option>
+            <option value="Италия">Италия</option>
+            <option value="Вьетнам">Вьетнам</option>
+            <option value="Словакия">Словакия</option>
+            <option value="Бельгия">Бельгия</option>
+            <option value="Германия">Германия</option>
+            <option value="Великобритания">Великобритания</option>
+            <option value="Республика Корея">Республика Корея</option>
+          </select>
+        </div>
+    </div>
+
+    <div class="textDiv">
+        <p>Цена</p>
+            <input type="text" placeholder="от" class="myInput" name ="minPrice">
+            <input type="text" placeholder="до" class="myInput" name ="maxPrice">
+        <p>Ширина рулона</p>
+            <input type="text" placeholder="от" class="myInput" name ="minWidthWall">
+            <input type="text" placeholder="до" class="myInput" name ="maxWidthWall">
+        <p>Длина рулона</p>
+            <input type="text" placeholder="от" class="myInput" name ="minLengthWall">
+            <input type="text" placeholder="до" class="myInput" name ="maxLengthWall">
+        <p>Вес упаковки</p>
+            <input type="text" placeholder="от" class="myInput" name ="minWeight">
+            <input type="text" placeholder="до" class="myInput" name ="maxWeight">
+    </div>
+</div>
 <hr>
-<p>Вид обоев</p>
-    <div class="filtDiv">
-        <input type="checkbox" id='type1' name="type1" value="Флизелиновые обои">
-        <label for="type1">Флизелиновые обои</label>
-    </div>
-    <div class="filtDiv">
-        <input type="checkbox" id='type2' name="type2" value="Виниловые обои">
-        <label for="type2">Виниловые обои</label>
-    </div>
-    <div class="filtDiv">
-        <input type="checkbox" id='type3' name="type3" value="Бумажные обои">
-        <label for="type3">Бумажные обои</label>
-    </div>
-    <div class="filtDiv">
-        <input type="checkbox" id='type4' name="type4" value="Фотообои/Декоративные">
-        <label for="type4">Фотообои/Декоративные</label>
-    </div>
-    <div class="filtDiv">
-        <input type="checkbox" id='type5' name="type5" value="Стеклообои">
-        <label for="type5">Стеклообои</label>
-    </div>
-    <div class="filtDiv">
-        <input type="checkbox" id='type6' name="type6" value="Обои под покраску">
-        <label for="type6">Обои под покраску</label>
-    </div>
-<hr>
+

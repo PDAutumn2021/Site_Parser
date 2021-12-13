@@ -1,6 +1,6 @@
 /venv/**
 /.idea/**
-/site/site_parser/protected.py
+/site_/site_parser/protected.py
 **/__pycache__
 /site_parser.log
 /site_/uwsgi.ini
