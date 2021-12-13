@@ -36,7 +36,10 @@ class Product (models.Model):
 
     @property
     def price(self):
-        return self.pricing_set.order_by('date').reverse()[0:1].first().price
+        temp = self.pricing_set.order_by('date').reverse()
+        if len(temp) == 0:
+            return ''
+        return temp[0].price
 
     def __str__(self):
         return self.name
