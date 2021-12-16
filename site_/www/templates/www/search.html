@@ -14,8 +14,8 @@
   <div id="myDropdown" class="dropdown-content">
     <form id='filter' name="filter">
         {% include 'category_filters/'|add:category_name|add:'.html' %}
-        <input type="text" name="itemPerPage" value="20" hidden>
-        <input type="text" name="page" value="1" hidden>
+        <input type="text" name="itemPerPage" value="{{ itemPerPage }}" hidden>
+        <input type="text" name="page" value="{{page}}" hidden>
         <button type="submit">Применить</button>
     </form>
   </div>
@@ -55,6 +55,7 @@ function filterFunction() {
         <button type="submit">Применить</button>
     </form>
 </div>
+<div class="pagination"></div>
 <script>
     var acc = document.getElementsByClassName("accordion");
     var i;
@@ -74,6 +75,39 @@ function filterFunction() {
         }
       });
     }
+  
+    function $_GET(key) {
+        var p = window.location.search;
+        p = p.match(new RegExp(key + '=([^&=]+)'));
+        return p ? p[1] : false;
+    }   
+    page = $_GET('page');
+    if(typeof page == 'undefined')
+      {page=1;}
+    page=Number(page)
+    var items="{{itemPerPage}}";
+    var count ="{{ total_count }}";
+    var pages_count = Math.ceil(count/items);
+    var articleDiv = document.querySelector("div.pagination");
+    pages=[];
+    for (var j=1;j<=pages_count;j++){
+        if (j < page && j < 4){pages.push(j);}
+        else if (j == page){pages.push(j);}
+        else if (j > page && j < (page+3)){pages.push(j);}
+        else if (j < page && j > page-3){pages.push(j);}
+        else if (j > page && j > pages_count-3){pages.push(j);} }
+    elem=[]
+    for (i=0; i<pages.length; i++){
+        var t=pages[i];
+        elem[t] = document.createElement("a");
+        elem[t].href = "?itemPerPage="+items+"&page="+(t);
+        articleDiv.appendChild(elem[t]);
+        var but = document.createElement('button');
+        but.innerHTML = t;
+        but.className = "accordion";
+        if (t==page){ but.style.backgroundColor = "#A9A9A9"}
+        elem[t].appendChild(but);  
+  }
 </script>
 {% endblock %}
 
