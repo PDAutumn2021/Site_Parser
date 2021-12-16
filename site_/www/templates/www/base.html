@@ -73,6 +73,38 @@
                  <div class="productsList">
                      {% block products %} {% endblock %}
                  </div>
+                 <div class="pagination_down" style="display: flex;"></div>
+                 <script>
+                  function $_GET(key) {
+                    var p = window.location.search;
+                    p = p.match(new RegExp(key + '=([^&=]+)'));
+                      return p ? p[1] : false;}
+                    page = $_GET('page');
+                    if(typeof page == 'undefined'){page=1;}
+                    page=Number(page)
+                    var items="{{itemPerPage}}";
+                    var count ="{{ total_count }}";
+                    var pages_count = Math.ceil(count/items);
+                    var articDiv = document.querySelector("div.pagination_down");
+                    pages=[];
+                    for (var j=1;j<=pages_count;j++){
+                        if (j < page && j < 4){pages.push(j);}
+                        else if (j == page){pages.push(j);}
+                        else if (j > page && j < (page+3)){pages.push(j);}
+                        else if (j < page && j > page-3){pages.push(j);}
+                        else if (j > page && j > pages_count-3){pages.push(j);} }
+                    for (i=0; i<pages.length; i++){
+                        var t=pages[i];
+                        elem[t] = document.createElement("a");
+                        elem[t].href = "?itemPerPage="+items+"&page="+(t);
+                        articDiv.appendChild(elem[t]);
+                        var but = document.createElement('button');
+                        but.innerHTML = t;
+                        but.className = "accordion";
+                        if (t==page){ but.style.backgroundColor = "#A9A9A9"}
+                        elem[t].appendChild(but);  
+                    }
+                 </script>
 
             </div>
         </div>
