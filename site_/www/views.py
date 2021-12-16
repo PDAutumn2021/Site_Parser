@@ -95,6 +95,7 @@ class CategoryListView (TemplateView, BaseContextMixin):
         filtered_products = self.get_products(kwargs['category_name'])
         context['products'] = self.get_product_list(filtered_products)
         context['total_count'] = len(filtered_products)
+        context['itemPerPage'] = 9
         return context
 
     def get_product_dict(self, product_obj):
