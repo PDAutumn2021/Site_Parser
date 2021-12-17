@@ -82,25 +82,32 @@
                       return p ? p[1] : false;}
                     page = $_GET('page');
                     if(typeof page == 'undefined'){page=1;}
-                    page=Number(page)
+                    page=Number(page);
+                    var get = '{{page_get}}';
                     var items="{{itemPerPage}}";
                     var count ="{{ total_count }}";
                     var pages_count = Math.ceil(count/items);
                     var articDiv = document.querySelector("div.pagination_down");
                     pages=[];
                     for (var j=1;j<=pages_count;j++){
-                        if (j < page && j < 4){pages.push(j);}
+                        if (j < page && j < 2){pages.push(j);}
                         else if (j == page){pages.push(j);}
                         else if (j > page && j < (page+3)){pages.push(j);}
                         else if (j < page && j > page-3){pages.push(j);}
-                        else if (j > page && j > pages_count-3){pages.push(j);} }
+                        else if (j > page && j > pages_count-1){pages.push(j);} }
                     for (i=0; i<pages.length; i++){
                         var t=pages[i];
                         elem[t] = document.createElement("a");
-                        elem[t].href = "?itemPerPage="+items+"&page="+(t);
+                        elem[t].href = "?itemPerPage="+items+"&page="+t+"&"+get;
                         articDiv.appendChild(elem[t]);
                         var but = document.createElement('button');
-                        but.innerHTML = t;
+                        if (t==1 && page !== 1)
+                            {but.innerHTML="<<";
+                             but.title="Первая страница";}
+                             else if (t==pages_count && page !== pages_count)
+                                {but.innerHTML=">>";
+                                 but.title="Последняя страница";}
+                                 else {but.innerHTML = t;}
                         but.className = "accordion";
                         if (t==page){ but.style.backgroundColor = "#A9A9A9"}
                         elem[t].appendChild(but);  
