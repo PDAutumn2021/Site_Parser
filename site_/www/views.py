@@ -96,6 +96,13 @@ class CategoryListView (TemplateView, BaseContextMixin):
         context['products'] = self.get_product_list(filtered_products)
         context['total_count'] = len(filtered_products)
         context['itemPerPage'] = 9
+        k=[]
+        i=0
+        for key, value in self.request.GET.items():
+            k.append(key+"="+value)
+            i=i+1
+        page_get='&'.join(k)
+        context['page_get'] = page_get
         return context
 
     def get_product_dict(self, product_obj):
@@ -115,7 +122,7 @@ class CategoryListView (TemplateView, BaseContextMixin):
         products_list = []
         if 'page' not in self.request.GET or 'itemPerPage' not in self.request.GET:
             beg = 0
-            end = 20
+            end = 9
         else:
             beg = int(self.request.GET['itemPerPage']) * (int(self.request.GET['page']) - 1)
             end = int(self.request.GET['itemPerPage']) * int(self.request.GET['page'])
