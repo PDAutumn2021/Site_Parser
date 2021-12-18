@@ -104,6 +104,7 @@ function filterFunction() {
       {page=1;}
     page=Number(page);
     var get = '{{page_get}}';
+    get=get.replace(/&amp;/g, '&');
     var items="{{itemPerPage}}";
     var count ="{{ total_count }}";
     var pages_count = Math.ceil(count/items);
