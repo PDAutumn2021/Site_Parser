@@ -81,7 +81,7 @@
                     p = p.match(new RegExp(key + '=([^&=]+)'));
                       return p ? p[1] : false;}
                     page = $_GET('page');
-                    if(typeof page == 'undefined'){page=1;}
+                    if(typeof(page) == 'boolean'){page=1;}
                     page=Number(page);
                     var get = '{{page_get}}';
                     var items="{{itemPerPage}}";
