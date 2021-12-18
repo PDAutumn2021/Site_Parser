@@ -14,8 +14,8 @@
   <div id="myDropdown" class="dropdown-content">
     <form id='filter' name="filter">
         {% include 'category_filters/'|add:category_name|add:'.html' %}
-        <input type="text" name="itemPerPage" value="20" hidden>
-        <input type="text" name="page" value="1" hidden>
+        <input type="text" name="itemPerPage" value="{{ itemPerPage }}" hidden>
+        <input type="text" name="page" value="{{page}}" hidden>
         <button type="submit">Применить</button>
     </form>
   </div>
@@ -50,12 +50,24 @@ function filterFunction() {
 <div class="panel">
     <form id='allFilter' name="bigFilter">
         {% include 'category_filters/'|add:category_name|add:'.html' %}
-        <input type="text" name="itemPerPage" value="20" hidden>
-        <input type="text" name="page" value="1" hidden>
+        <!--<input type="text" name="itemPerPage" value="20" hidden>
+        <input type="text" name="page" value="1" hidden>-->
         <button type="submit">Применить</button>
     </form>
 </div>
+<div class="pagination"></div>
 <script>
+
+    function populateForm(){
+        let form = document.forms.bigFilter;
+        for (let i=0; i<form.elements.length; i++){
+            if ($_GET(form.elements[i].name)){
+                form.elements[i].value = $_GET(form.elements[i].name);
+            }
+        }
+    }
+    populateForm();
+
     var acc = document.getElementsByClassName("accordion");
     var i;
 
@@ -74,6 +86,54 @@ function filterFunction() {
         }
       });
     }
+  
+    function $_GET(parameterName) {
+        var result = null,
+        tmp = [];
+        location.search
+            .substr(1)
+            .split("&")
+            .forEach(function (item) {
+              tmp = item.split("=");
+              if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            });
+        return result;
+    }   
+    page = $_GET('page');
+    if(page == null)
+      {page=1;}
+    page=Number(page);
+    var get = '{{page_get}}';
+    get=get.replace(/&amp;/g, '&');
+    var items="{{itemPerPage}}";
+    var count ="{{ total_count }}";
+    var pages_count = Math.ceil(count/items);
+    var articleDiv = document.querySelector("div.pagination");
+    pages=[];
+    for (var j=1;j<=pages_count;j++){
+        if (j < page && j < 2){pages.push(j);}
+        else if (j == page){pages.push(j);}
+        else if (j > page && j < (page+3)){pages.push(j);}
+        else if (j < page && j > page-3){pages.push(j);}
+        else if (j > page && j > pages_count-1){pages.push(j);} }
+    elem=[]
+    for (i=0; i<pages.length; i++){
+        var t=pages[i];
+        elem[t] = document.createElement("a");
+        elem[t].href = "?itemPerPage="+items+"&page="+t+"&"+get;
+        articleDiv.appendChild(elem[t]);
+        var but = document.createElement('button');
+        if (t==1 && page !== 1)
+          {but.innerHTML="<<";
+          but.title="Первая страница";}
+           else if (t==pages_count && page !== pages_count && page != 1)
+            {but.innerHTML=">>";
+            but.title="Последняя страница";}
+            else {but.innerHTML = t;}
+        but.className = "accordion";
+        if (t==page){ but.style.backgroundColor = "#A9A9A9"}
+        elem[t].appendChild(but);  
+  }
 </script>
 {% endblock %}
 
