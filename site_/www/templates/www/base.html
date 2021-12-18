@@ -81,7 +81,7 @@
                     p = p.match(new RegExp(key + '=([^&=]+)'));
                       return p ? p[1] : false;}
                     page = $_GET('page');
-                    if(typeof(page) == 'boolean'){page=1;}
+                    if(page == null){page=1;}
                     page=Number(page);
                     var get = '{{page_get}}';
                     var items="{{itemPerPage}}";
@@ -104,7 +104,7 @@
                         if (t==1 && page !== 1)
                             {but.innerHTML="<<";
                              but.title="Первая страница";}
-                             else if (t==pages_count && page !== pages_count)
+                             else if (t==pages_count && page !== pages_count && page != 1)
                                 {but.innerHTML=">>";
                                  but.title="Последняя страница";}
                                  else {but.innerHTML = t;}
