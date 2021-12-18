@@ -100,7 +100,7 @@ function filterFunction() {
         return result;
     }   
     page = $_GET('page');
-    if(typeof page == 'undefined')
+    if(typeof(page) == 'boolean')
       {page=1;}
     page=Number(page);
     var get = '{{page_get}}';
