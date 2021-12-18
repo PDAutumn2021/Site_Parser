@@ -99,6 +99,8 @@ class CategoryListView (TemplateView, BaseContextMixin):
         k=[]
         i=0
         for key, value in self.request.GET.items():
+            if key == 'itemPerPage' or key == 'page':
+                continue
             k.append(key+"="+value)
             i=i+1
         page_get='&'.join(k)
