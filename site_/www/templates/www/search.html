@@ -100,7 +100,7 @@ function filterFunction() {
         return result;
     }   
     page = $_GET('page');
-    if(typeof(page) == 'boolean')
+    if(page == null)
       {page=1;}
     page=Number(page);
     var get = '{{page_get}}';
@@ -125,7 +125,7 @@ function filterFunction() {
         if (t==1 && page !== 1)
           {but.innerHTML="<<";
           but.title="Первая страница";}
-          else if (t==pages_count && page !== pages_count)
+           else if (t==pages_count && page !== pages_count && page != 1)
             {but.innerHTML=">>";
             but.title="Последняя страница";}
             else {but.innerHTML = t;}
