@@ -212,6 +212,11 @@ class ProductDetailView (TemplateView, BaseContextMixin):
         return products_list
 
 
+class LandingView (TemplateView, BaseContextMixin):
+
+    template_name = 'www/landing.html'
+
+
 class LoaderView (TemplateView, BaseContextMixin):
 
     template_name = 'www/loader.html'
