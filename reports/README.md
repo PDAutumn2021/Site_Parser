@@ -6,6 +6,9 @@
 
 В следующем семестре
 
+# Постер
+![Alt text](posterFinal.png?raw=true "Title")
+
 ## Индивидуальные планы работы
 
 - [Кузьмин Р.М.](kuzmin.md)
