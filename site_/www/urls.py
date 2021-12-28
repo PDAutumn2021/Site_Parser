@@ -15,6 +15,7 @@ urlpatterns = [
     path('avtorization', views.avtorization, name='avtorizationPage'),
     path('registration', views.registration, name='registrationPage'),
 
+    path('landing', views.LandingView.as_view(), name='landing'),
     path('loader', views.LoaderView.as_view(), name='loader'),
 ]
 urlpatterns += staticfiles_urlpatterns()
