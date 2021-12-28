@@ -6,9 +6,6 @@
 
 В следующем семестре
 
-# Постер
-![Alt text](posterFinal.png?raw=true "Title")
-
 ## Индивидуальные планы работы
 
 - [Кузьмин Р.М.](kuzmin.md)
@@ -17,6 +14,10 @@
 - [Репина О.М.](repina.md)
 - [Сахарова И.В.](saharova.md)
 
-## Отчёт
+# Постер
+
+![Alt text](posterFinal.png?raw=true "Title")
+
+# Отчёт
 
 В следующем семестре
