@@ -16,7 +16,7 @@
 
 # Постер
 
-![Alt text](posterFinal.png?raw=true "Title")
+![Alt text](posterFinal.png?raw=true "Постер")
 
 # Отчёт
 
