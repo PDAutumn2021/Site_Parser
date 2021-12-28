@@ -6,8 +6,6 @@
 
 ## Сайт проекта: http://pd-2021-2.std-1548.ist.mospolytech.ru/
 
-![Alt text](reports/posterFinal.png?raw=true "Title")
-
 ## Презентация проекта:
 В следующем семестре
 
