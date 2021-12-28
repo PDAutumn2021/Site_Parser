@@ -8,7 +8,7 @@
 
 ## Презентация проекта:
 
-[Презентация](reports/Presentation.pdf)
+[Презентация](reports/presentation.pdf)
 
 ## Участники
 
