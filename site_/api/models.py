@@ -22,7 +22,7 @@ class Category(models.Model):
 
 class Product (models.Model):
 
-    name = models.CharField(max_length=100, null=False, blank=False)
+    name = models.CharField(max_length=200, null=False, blank=False)
     site = models.ForeignKey(Site, on_delete=models.RESTRICT, null=False, blank=False)
     url = models.URLField(max_length=250, null=False, blank=False)
     img = models.URLField(max_length=250, null=False, blank=False)
